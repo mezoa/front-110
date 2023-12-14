@@ -1,0 +1,30 @@
+.bar {
+    position: absolute;
+    bottom: 0px;
+    left: 0px;
+    background-color: currentColor;
+    height: 3px;
+}
+
+.notification_item {
+    width: 300px;
+    overflow: hidden;
+}
+
+.close_notification_btn {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    cursor: pointer;
+    border-radius: 2px;
+    background-color: currentColor;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.notification-message {
+    padding-right: 21px;
+}

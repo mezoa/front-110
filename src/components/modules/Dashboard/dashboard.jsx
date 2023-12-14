@@ -1,7 +1,7 @@
 import React from 'react'
 import InfoCard from './infocard'
 import ChartCard from './chartcard'
-import TwentyFour from '../svg/TwentyFour'
+import TwentyFour from '../../../assets/icons/TwentyFour'
 
 const Dashboard = ({ loading, report_data, incomes_chart_data, expenses_chart_data, incomeCatData, expenseCatData }) => {
   return (

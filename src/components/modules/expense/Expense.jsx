@@ -1,0 +1,321 @@
+import { useEffect, useState } from "react";
+import Loader from "../../shared/loader/Loader";
+import Pagination from "../../shared/pagination/Pagination";
+import { useConfirmStore } from "../../components/shared/confirm-alert/confirmStore";
+import { useExpenseStore } from "./expenseStore";
+import { useExpenseCategoryStore } from "../expense-category/expenseCategoryStore";
+import BinSvgIcon from "../../assets/icons/bin-svg-icon";
+import EditSvgIcon from "../../assets/icons/edit-svg-icon";
+import ViewSvgIcon from "../../assets/icons/view-svg-icon";
+import AddNewButton from "../../components/buttons/AddNewButton";
+import FilterButton from "../../components/buttons/FilterButton";
+import BulkDeleteButton from "../../components/buttons/BulkDeleteButton";
+import AddExpense from "./addexpense";
+import EditExpense from "./EditExpense";
+import ViewExpense from "./ViewExpense";
+
+const Expense = () => {
+    const [loading, setLoading] = useState(false);
+    const [filterTab, setFilterTab] = useState(true);
+    const [showAddExpense, setShowAddExpense] = useState(false);
+    const [showEditExpense, setShowEditExpense] = useState(false);
+    const [showViewExpense, setShowViewExpense] = useState(false);
+
+    const expenseStore = useExpenseStore();
+    const confirmStore = useConfirmStore();
+    const [expenses, setExpenses] = useState([]);
+    const expenseCategoryStore = useExpenseCategoryStore();
+    const [expenseCategories, setExpenseCategories] = useState([]);
+    const [q_title, setQTitle] = useState("");
+    const [selected_expenses, setSelectedExpenses] = useState([]);
+    const [all_selectd, setAllSelectd] = useState(false);
+
+    const select_all = () => {
+        if (all_selectd === false) {
+            setSelectedExpenses(expenseStore.expenses.map((element) => element.id));
+            setAllSelectd(true);
+        } else {
+            setAllSelectd(false);
+            setSelectedExpenses([]);
+        }
+    };
+
+    const deleteData = async (id) => {
+        confirmStore.show_box({ message: "Do you want to delete selected expense?" }).then(async () => {
+            if (confirmStore.do_action === true) {
+                expenseStore.deleteExpense(id).then(() => {
+                    expenseStore.fetchExpenses(expenseStore.current_page, expenseStore.limit, expenseStore.q_title);
+
+                    if (Array.isArray(id)) {
+                        setAllSelectd(false);
+                        setSelectedExpenses([]);
+                    }
+                });
+            }
+        });
+    };
+
+    const openEditExpenseModal = (id) => {
+        expenseStore.edit_expense_id = id;
+        setShowEditExpense(true);
+    };
+
+    const openViewExpenseModal = (id) => {
+        expenseStore.view_expense_id = id;
+        setShowViewExpense(true);
+    };
+
+    const fetchData = async (page = expenseStore.current_page, limit = expenseStore.limit, q_title = expenseStore.q_title) => {
+        setLoading(true);
+
+        setAllSelectd(false);
+        setSelectedExpenses([]);
+
+        try {
+            expenseStore.fetchExpenses(page, limit, q_title).then((response) => {
+                setLoading(false);
+            });
+        } catch (error) {
+            // console.log(error);
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchData(1);
+        expenseCategoryStore.fetchCatList().then((response) => {
+            setExpenseCategories(response);
+        });
+    }, []);
+
+    return (
+        <div>
+            <div className="page-top-box mb-2 d-flex flex-wrap">
+                <h3 className="h3">Expense List</h3>
+                <div className="page-heading-actions ms-auto">
+                    {selected_expenses.length > 0 && <BulkDeleteButton onClick={() => deleteData(selected_expenses)} />}
+                    <AddNewButton onClick={() => setShowAddExpense(true)} />
+                    <FilterButton onClick={() => setFilterTab(!filterTab)} />
+                </div>
+            </div>
+            {filterTab && (
+                <div className="p-1 my-2">
+                    <div className="row">
+                        <div className="col-md-3 col-sm-6 my-1">
+                            <input
+                                type="text"
+                                className="form-control"
+                                placeholder="type name.."
+                                value={q_title}
+                                onChange={(e) => {
+                                    setQTitle(e.target.value);
+                                    fetchData(1, expenseStore.limit, e.target.value);
+                                }}
+                            />
+                        </div>
+                        <div className="col-md-3 col-sm-6 my-1">
+                            <select
+                                className="form-select"
+                                value={expenseStore.q_category}
+                                onChange={(e) => {
+                                    expenseStore.q_category = e.target.value;
+                                    fetchData(1);
+                                }}
+                            >
+                                <option value="">select category</option>
+                                {expenseCategories.map((expenseCategory) => (
+                                    <option key={expenseCategory.value} value={expenseCategory.value}>
+                                        {expenseCategory.label}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                        <div className="col-md-3 col-sm-6 my-1">
+                            <div className="input-group input-group-sm mb-3">
+                                <span className="input-group-text">From</span>
+                                <input
+                                    type="date"
+                                    className="form-control"
+                                    onChange={(e) => {
+                                        expenseStore.q_start_date = e.target.value;
+                                        fetchData(1);
+                                    }}
+                                    value={expenseStore.q_start_date}
+                                />
+                            </div>
+                        </div>
+                        <div className="col-md-3 col-sm-6 my-1">
+                            <div className="input-group input-group-sm mb-3">
+                                <span className="input-group-text">To</span>
+                                <input
+                                    type="date"
+                                    className="form-control"
+                                    onChange={(e) => {
+                                        expenseStore.q_end_date = e.target.value;
+                                        fetchData(1);
+                                    }}
+                                    value={expenseStore.q_end_date}
+                                />
+                            </div>
+                        </div>
+                        <div className="col-md-3 col-sm-6 my-1">
+                            <div className="input-group input-group-sm mb-3">
+                                <span className="input-group-text">Min Amount</span>
+                                <input
+                                    type="number"
+                                    className="form-control"
+                                    onInput={(e) => {
+                                        expenseStore.q_start_amount = e.target.value;
+                                        fetchData(1);
+                                    }}
+                                    value={expenseStore.q_start_amount}
+                                />
+                            </div>
+                        </div>
+                        <div className="col-md-3 col-sm-6 my-1">
+                            <div className="input-group input-group-sm mb-3">
+                                <span className="input-group-text">Max Amount</span>
+                                <input
+                                    type="number"
+                                    className="form-control"
+                                    onInput={(e) => {
+                                        expenseStore.q_end_amount = e.target.value;
+                                        fetchData(1);
+                                    }}
+                                    value={expenseStore.q_end_amount}
+                                />
+                            </div>
+                        </div>
+                        <div className="col-md-3 col-sm-6 my-1">
+                            <div className="input-group input-group-sm mb-3">
+                                <span className="input-group-text">Sort By</span>
+                                <select
+                                    className="form-select"
+                                    value={expenseStore.q_sort_column}
+                                    onChange={(e) => {
+                                        expenseStore.q_sort_column = e.target.value;
+                                        fetchData(1);
+                                    }}
+                                >
+                                    <option value="id">Default</option>
+                                    <option value="date">Date</option>
+                                    <option value="amount">Amount</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div className="col-md-3 col-sm-6 my-1">
+                            <div className="input-group input-group-sm mb-3">
+                                <span className="input-group-text">order</span>
+                                <select
+                                    className="form-select"
+                                    value={expenseStore.q_sort_order}
+                                    onChange={(e) => {
+                                        expenseStore.q_sort_order = e.target.value;
+                                        fetchData(1);
+                                    }}
+                                >
+                                    <option value="desc">desc</option>
+                                    <option value="asc">asc</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {loading && <Loader />}
+            {!loading && (
+                <div className="table-responsive bg-white shadow-sm">
+                    <table className="table mb-0 table-hover">
+                        <thead className="thead-dark">
+                            <tr>
+                                <th>
+                                    <input
+                                        type="checkbox"
+                                        className="form-check-input"
+                                        onClick={select_all}
+                                        checked={all_selectd}
+                                    />
+                                </th>
+                                <th>Title</th>
+                                <th>Amount</th>
+                                <th>Category</th>
+                                <th>Date</th>
+                                <th className="table-action-col">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {expenses.map((expense) => (
+                                <tr key={expense.id}>
+                                    <td>
+                                        <input
+                                            type="checkbox"
+                                            className="form-check-input"
+                                            checked={selected_expenses.includes(expense.id)}
+                                            onChange={(e) => {
+                                                if (e.target.checked) {
+                                                    setSelectedExpenses([...selected_expenses, expense.id]);
+                                                } else {
+                                                    setSelectedExpenses(selected_expenses.filter((id) => id !== expense.id));
+                                                }
+                                            }}
+                                        />
+                                    </td>
+                                    <td className="min150 max150">{expense.title}</td>
+                                    <td className="min100 max100">{expense.amount}</td>
+                                    <td className="min200 max200">
+                                        {expense.categories.map((expense_cat) => (
+                                            <span key={expense_cat.value} className="badge bg-primary m-1 px-2 shadow-sm py-1">
+                                                {expense_cat.label}
+                                            </span>
+                                        ))}
+                                    </td>
+                                    <td className="min100 max100">{expense.date}</td>
+                                    <td className="table-action-btns">
+                                        <ViewSvgIcon color="#00CFDD" onClick={() => openViewExpenseModal(expense.id)} />
+                                        <EditSvgIcon color="#739EF1" onClick={() => openEditExpenseModal(expense.id)} />
+                                        <BinSvgIcon color="#FF7474" onClick={() => deleteData(expense.id)} />
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+            )}
+            {!loading && expenses.length > 0 && (
+                <Pagination
+                    total_pages={expenseStore.total_pages}
+                    current_page={expenseStore.current_page}
+                    per_page={expenseStore.limit}
+                    pageChange={(currentPage) => fetchData(currentPage, expenseStore.limit)}
+                    perPageChange={(perpage) => fetchData(1, perpage)}
+                />
+            )}
+            <div className="modals-container">
+                {showAddExpense && (
+                    <AddExpense
+                        categories={expenseCategories}
+                        onClose={() => setShowAddExpense(false)}
+                        refreshData={() => fetchData(1)}
+                    />
+                )}
+                {showEditExpense && (
+                    <EditExpense
+                        expense_id={expenseStore.edit_expense_id}
+                        categories={expenseCategories}
+                        onClose={() => setShowEditExpense(false)}
+                        refreshData={() => fetchData(expenseStore.current_page)}
+                    />
+                )}
+                {showViewExpense && (
+                    <ViewExpense
+                        expense_id={expenseStore.view_expense_id}
+                        onClose={() => setShowViewExpense(false)}
+                    />
+                )}
+            </div>
+        </div>
+    );
+};
+
+export default Expense;
