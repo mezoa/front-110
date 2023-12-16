@@ -1,12 +1,13 @@
 import axios from "axios";
-import formatValidationErrors from "../../utils/format-validation-errors";
 import { useSelector, useDispatch } from "react-redux";
-import { addNotification } from "../../shared/notification/notificationActions";
+import { addNotification } from "../../shared/notification/notification-container";
+import formatValidationErrors from "../../utils/format-validation-error";
 
 export const useIncomeStore = () => {
-    const dispatch = useDispatch();
+  const dispatch = useDispatch();
+  const state = useSelector((state) => state); // Get the current state from the Redux store
 
-    const initialState = {
+  const initialState = {
         current_page: 1,
         total_pages: 0,
         limit: 10,
@@ -45,21 +46,16 @@ export const useIncomeStore = () => {
 
     const fetchIncomes = async (page, limit, q_title = "") => {
         try {
-            const response = await axios.get(
-                `/api/incomes?page=${page}&limit=${limit}&title=${q_title}&category=${state.q_category}&start_amount=${state.q_start_amount}&end_amount=${state.q_end_amount}&start_date=${state.q_start_date}&end_date=${state.q_end_date}&sort_column=${state.q_sort_column}&sort_order=${state.q_sort_order}`
-            );
-            dispatch({ type: "SET_INCOMES", payload: response.data.data });
-            if (response.data.meta) {
-                dispatch({ type: "SET_TOTAL_PAGES", payload: response.data.meta.last_page });
-                dispatch({ type: "SET_CURRENT_PAGE", payload: response.data.meta.current_page });
-                dispatch({ type: "SET_LIMIT", payload: response.data.meta.per_page });
-                dispatch({ type: "SET_Q_TITLE", payload: q_title });
-            }
-            return response.data.data;
+          const response = await axios.get(
+            `/api/incomes?page=${page}&limit=${limit}&title=${q_title}&category=${state.incomes.q_category}&start_amount=${state.incomes.q_start_amount}&end_amount=${state.incomes.q_end_amount}&start_date=${state.incomes.q_start_date}&end_date=${state.incomes.q_end_date}&sort_column=${state.incomes.q_sort_column}&sort_order=${state.incomes.q_sort_order}`
+          );
+          dispatch({ type: "SET_INCOMES", payload: response.data.data });
+          // ... (rest of your code)
+          return response.data.data;
         } catch (error) {
-            throw error;
+          throw error;
         }
-    };
+      };
 
     const fetchIncome = async (id) => {
         try {
@@ -117,7 +113,6 @@ export const useIncomeStore = () => {
             throw error;
         }
     };
-
     return {
         state: initialState,
         resetCurrentIncomeData,
@@ -126,5 +121,5 @@ export const useIncomeStore = () => {
         addIncome,
         editIncome,
         deleteIncome,
+      };
     };
-};

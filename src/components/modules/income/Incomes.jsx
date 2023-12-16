@@ -28,8 +28,8 @@ const Incomes = () => {
     let incomeCategories = [];
 
     const q_title = "";
-    const selected_incomes = [];
-    const all_selectd = false;
+    let selected_incomes = [];
+    let all_selectd = false;
 
     const select_all = () => {
         if (all_selectd === false) {

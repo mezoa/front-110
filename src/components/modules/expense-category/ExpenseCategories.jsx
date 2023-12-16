@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import Loader from '../../shared/loader/Loader.jsx'
-import Pagination from "../../shared/pagination/Pagination";
+import Pagination from "../../shared/pagination/Pagination.jsx";
 import { useConfirmStore } from "../../shared/confirm-alert/confirmStore.js";
 import { useExpenseCategoryStore } from "./expenseCategoryStore";
 import BinIcon from "../../../assets/icons/binicon.jsx";
@@ -12,6 +12,7 @@ import BulkDeleteButton from "../../buttons/BulkDeleteButton.jsx";
 import AddExpenseCat from "./AddExpenseCat.jsx";
 import EditExpenseCat from "./EditExpenses.jsx";
 import ViewExpenseCat from "./ViewExpenseCat.jsx";
+
 
 const ExpenseCategories = () => {
     const [loading, setLoading] = useState(false);

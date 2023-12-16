@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import CrossIcon from "../../../assets/icons/crossicon";
-import Loader from "../../components/shared/loader/Loader";
+import Loader from "../../shared/loader/Loader"
 import { useExpenseCategoryStore } from "./expenseCategoryStore";
 
 const ViewExpenseCat = ({ expense_category_id }) => {

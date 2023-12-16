@@ -1,5 +1,5 @@
 import axios from "axios";
-import formatValidationErrors from "../../utils/format-validation-errors";
+import formatValidationErrors from "../../utils/format-validation-error"
 import { configureStore } from "@reduxjs/toolkit";
 import { useDispatch } from "react-redux";
 

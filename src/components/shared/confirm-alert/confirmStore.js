@@ -1,5 +1,5 @@
-import { createStore, applyMiddleware } from "redux";
-import thunk from "redux-thunk";
+import { createStore, applyMiddleware } from 'redux';
+import thunk from 'redux-thunk';
 
 const initialState = {
     message: "Are you sure to do this action???",
@@ -42,4 +42,6 @@ const confirmReducer = (state = initialState, action) => {
 
 const store = createStore(confirmReducer, applyMiddleware(thunk));
 
-export default store;
+export const useConfirmStore = () => {
+    return store;
+};

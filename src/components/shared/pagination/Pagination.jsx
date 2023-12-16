@@ -137,3 +137,4 @@ function Pagination({ total_pages, current_page, per_page }) {
         </div>
     );
 }
+export default Pagination;
