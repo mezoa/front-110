@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import CrossSvgIcon from "../../assets/icons/cross-svg-icon";
-import Loader from "../../components/shared/loader/Loader";
+import CrossIcon from "../../../assets/icons/crossicon";
+import Loader from "../../shared/loader/Loader";
 import { useIncomeCategoryStore } from "./incomeCategoryStore";
 
 const ViewIncomeCat = ({ income_category_id }) => {
@@ -30,7 +30,7 @@ const ViewIncomeCat = ({ income_category_id }) => {
                     <div className="modal-header">
                         <h5 className="modal-title">Income Category Details</h5>
                         <button type="button" className="close">
-                            <CrossSvgIcon onClick={closeEditIncomeModal} />
+                            <CrossIcon onClick={closeEditIncomeModal} />
                         </button>
                     </div>
 

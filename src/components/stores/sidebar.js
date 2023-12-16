@@ -1,19 +1,23 @@
+import { defineStore } from 'redox';
 
-import { defineStore } from "pinia";
-
-export const useSidebar = defineStore("sidebar", {
+export const useSidebar = defineStore('sidebar', {
     state: () => ({
-        open: true,
+        isOpen: false,
+        activeItem: null,
     }),
 
     getters: {
-        getSidebarStatus: (state) => state.open,
+        getSidebarStatus: (state) => state.isOpen,
     },
 
     actions: {
-        toggle() {
-            this.open = !this.open;
+        toggleSidebar() {
+            this.isOpen = !this.isOpen;
+        },
+        setActiveItem(item) {
+            this.activeItem = item;
         },
     },
 });
 
+export default useSidebar;

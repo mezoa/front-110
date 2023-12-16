@@ -1,11 +1,12 @@
-
 import axios from "axios";
 import formatValidationErrors from "../../utils/format-validation-error";
-import { defineStore } from "pinia";
+import { createSlice } from "@reduxjs/toolkit";
+import { useDispatch } from "react-redux";
 import { useNotificationStore } from "../../shared/notification/notificationstore";
 
-export const useExpenseCategoryStore = defineStore("expense_category", {
-    state: () => ({
+const expenseCategorySlice = createSlice({
+    name: "expense_category",
+    initialState: {
         current_page: 1,
         total_pages: 0,
         limit: 10,
@@ -25,69 +26,44 @@ export const useExpenseCategoryStore = defineStore("expense_category", {
             id: "",
             name: "",
         },
-    }),
-
-    getters: {},
-
-    actions: {
-        resetCurrentExpenseCatData() {
-            this.current_expense_category_item = {
+    },
+    reducers: {
+        resetCurrentExpenseCatData(state) {
+            state.current_expense_category_item = {
                 id: "",
                 name: "",
             };
-            this.add_expense_category_errors = [];
-            this.edit_expense_category_errors = [];
+            state.add_expense_category_errors = [];
+            state.edit_expense_category_errors = [];
         },
-
-        async fetchCatList() {
-            try {
-                const response = await axios.get(`/api/expense-categories/list`);
-                return response.data.data;
-            } catch (errors) {
-                throw errors;
-            }
-        },
-
-        async fetchExpenseCats(page, limit, q_name = "") {
-            try {
-                const response = await axios.get(
-                    `/api/expense-categories?page=${page}&limit=${limit}&name=${q_name}`
-                );
-                this.expense_categories = response.data.data;
-                if (response.data.meta) {
-                    this.total_pages = response.data.meta.last_page;
-                    this.current_page = response.data.meta.current_page;
-                    this.limit = response.data.meta.per_page;
-                    this.q_name = q_name;
+    },
+    extraReducers: (builder) => {
+        builder
+            .addCase(fetchCatList.fulfilled, (state, action) => {
+                state.expense_categories = action.payload;
+            })
+            .addCase(fetchExpenseCats.fulfilled, (state, action) => {
+                state.expense_categories = action.payload;
+                if (action.meta) {
+                    state.total_pages = action.meta.last_page;
+                    state.current_page = action.meta.current_page;
+                    state.limit = action.meta.per_page;
+                    state.q_name = action.q_name;
                 }
-                return this.expense_categories;
-            } catch (errors) {
-                throw errors;
-            }
-        },
-
-        async fetchExpenseCat(id) {
-            try {
-                const response = await axios.get(`/api/expense-categories/${id}`);
-                this.current_expense_category_item = response.data.data;
-                return response.data.data;
-            } catch (errors) {
-                throw errors;
-            }
-        },
-
-        async addExpenseCat(data) {
-            try {
-                const response = await axios.post(`/api/expense-categories`, data);
-                this.resetCurrentExpenseCatData();
+            })
+            .addCase(fetchExpenseCat.fulfilled, (state, action) => {
+                state.current_expense_category_item = action.payload;
+            })
+            .addCase(addExpenseCat.fulfilled, (state, action) => {
+                state.resetCurrentExpenseCatData();
                 const notifcationStore = useNotificationStore();
                 notifcationStore.pushNotification({
                     message: "ExpenseCat Added Successfully",
                     type: "success",
                     time: 2000,
                 });
-                return response;
-            } catch (error) {
+            })
+            .addCase(addExpenseCat.rejected, (state, action) => {
                 const notifcationStore = useNotificationStore();
                 notifcationStore.pushNotification({
                     message: "Error Occurred",
@@ -95,68 +71,56 @@ export const useExpenseCategoryStore = defineStore("expense_category", {
                     time: 2000,
                 });
 
-                if (error.response.status == 422) {
-                    this.add_expense_category_errors = formatValidationErrors(
-                        error.response.data.errors
+                if (action.payload.response.status == 422) {
+                    state.add_expense_category_errors = formatValidationErrors(
+                        action.payload.response.data.errors
                     );
                 }
-                throw error;
-            }
-        },
-
-        async editExpenseCat(data) {
-            try {
-                const response = await axios.put(
-                    `/api/expense-categories/${this.edit_expense_category_id}`,
-                    data
-                );
-                this.resetCurrentExpenseCatData();
+            })
+            .addCase(editExpenseCat.fulfilled, (state, action) => {
+                state.resetCurrentExpenseCatData();
                 const notifcationStore = useNotificationStore();
                 notifcationStore.pushNotification({
                     message: "expense category updated successfully",
                     type: "success",
                 });
-                return response;
-            } catch (errors) {
+            })
+            .addCase(editExpenseCat.rejected, (state, action) => {
                 const notifcationStore = useNotificationStore();
                 notifcationStore.pushNotification({
                     message: "Error Occurred",
                     type: "error",
                 });
 
-                if (errors.response.status == 422) {
-                    this.edit_expense_category_errors = formatValidationErrors(
-                        errors.response.data.errors
+                if (action.payload.response.status == 422) {
+                    state.edit_expense_category_errors = formatValidationErrors(
+                        action.payload.response.data.errors
                     );
                 }
-                throw errors;
-            }
-        },
-
-        async deleteExpenseCat(id) {
-            try {
-                const response = await axios.delete(`/api/expense-categories/${id}`);
+            })
+            .addCase(deleteExpenseCat.fulfilled, (state, action) => {
                 if (
-                    this.expense_categories.length == 1 ||
-                    (Array.isArray(id) && id.length == this.expense_categories.length)
+                    state.expense_categories.length == 1 ||
+                    (Array.isArray(action.payload) &&
+                        action.payload.length == state.expense_categories.length)
                 ) {
-                    this.current_page == 1
-                        ? (this.current_page = 1)
-                        : (this.current_page -= 1);
+                    state.current_page == 1
+                        ? (state.current_page = 1)
+                        : (state.current_page -= 1);
                 }
 
-                this.resetCurrentExpenseCatData();
+                state.resetCurrentExpenseCatData();
                 const notifcationStore = useNotificationStore();
                 notifcationStore.pushNotification({
                     message: "expense category deleted successfully",
                     type: "success",
                     time: 2000,
                 });
-                return response;
-            } catch (errors) {
+            })
+            .addCase(deleteExpenseCat.rejected, (state, action) => {
                 if (
-                    errors.response.data.error_type &&
-                    errors.response.data.error_type == "HAS_CHILD_ERROR"
+                    action.payload.response.data.error_type &&
+                    action.payload.response.data.error_type == "HAS_CHILD_ERROR"
                 ) {
                     const notifcationStore = useNotificationStore();
                     notifcationStore.pushNotification({
@@ -166,9 +130,14 @@ export const useExpenseCategoryStore = defineStore("expense_category", {
                         time: 5000,
                     });
                 }
-                throw errors;
-            }
-        },
+            });
     },
 });
 
+export const useExpenseCategoryStore = () => {
+    const dispatch = useDispatch();
+    return {
+        ...expenseCategorySlice,
+        dispatch,
+    };
+};

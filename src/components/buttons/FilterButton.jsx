@@ -1,10 +1,10 @@
 import React from "react";
-import FilterSvg from "../../assets/icons/filter-svg-icon.vue";
+import FilterIcon from "../../assets/icons/filtericon";
 
 const FilterButton = () => {
     return (
         <button className="btn btn-sm btn-outline-info m-1">
-            <FilterSvg color="currentColor" />
+            <FilterIcon color="currentColor" />
             <span className="ms-1 d-600-none">Filter</span>
         </button>
     );

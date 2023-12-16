@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import CrossSvgIcon from "../../assets/icons/cross-svg-icon";
-import Loader from "../../components/shared/loader/Loader";
+import CrossIcon from "../../../assets/icons/crossicon";
+import Loader from "../../shared/loader/Loader";
 import { useExpenseCategoryStore } from "./expenseCategoryStore";
 
 const EditExpenses = ({ expense_category_id }) => {
@@ -48,7 +48,7 @@ const EditExpenses = ({ expense_category_id }) => {
                             className="close"
                             onClick={closeEditExpenseModal}
                         >
-                            <CrossSvgIcon />
+                            <CrossIcon />
                         </button>
                     </div>
 

@@ -1,40 +1,45 @@
-import { defineStore } from "pinia";
+import { createStore, applyMiddleware } from "redux";
+import thunk from "redux-thunk";
 
-export const useConfirmStore = defineStore("confirm", {
-    state: () => ({
-        message: "Are you sure to do this action???",
-        do_action: false,
-        show_confirm_box: false,
-        resolve: null,
-    }),
+const initialState = {
+    message: "Are you sure to do this action???",
+    do_action: false,
+    show_confirm_box: false,
+    resolve: null,
+};
 
-    getters: {
-        getActionState: (state) => state.do_action,
-    },
+const confirmReducer = (state = initialState, action) => {
+    switch (action.type) {
+        case "CONFIRM_ACTION":
+            return {
+                ...state,
+                do_action: true,
+                show_confirm_box: false,
+            };
+        case "CANCEL_ACTION":
+            return {
+                ...state,
+                do_action: false,
+                show_confirm_box: false,
+            };
+        case "HIDE_BOX":
+            return {
+                ...state,
+                resolve: action.payload.resolve,
+                show_confirm_box: false,
+            };
+        case "SHOW_BOX":
+            return {
+                ...state,
+                message: action.payload.message ? action.payload.message : state.message,
+                show_confirm_box: true,
+                do_action: false,
+            };
+        default:
+            return state;
+    }
+};
 
-    actions: {
-        async confirm_action() {
-            this.do_action = true;
-            this.hide_box();
-        },
+const store = createStore(confirmReducer, applyMiddleware(thunk));
 
-        async cancel_action() {
-            this.do_action = false;
-            this.hide_box();
-        },
-
-        hide_box() {
-            this.resolve();
-            this.show_confirm_box = false;
-        },
-
-        async show_box(data = {}) {
-            this.message = data.message ? data.message : this.message;
-            this.show_confirm_box = true;
-            this.do_action = false;
-            return new Promise((resolve, reject) => {
-                this.resolve = resolve;
-            });
-        },
-    },
-});
+export default store;

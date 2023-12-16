@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from "react";
-import Loader from "../../components/shared/loader/Loader";
-import Pagination from "../../components/shared/pagination/Pagination";
-import { useConfirmStore } from "../../components/shared/confirm-alert/confirmStore";
+import Loader from "../../shared/loader/Loader";
+import Pagination from "../../shared/pagination/Pagination";
+import { useConfirmStore } from "../../shared/confirm-alert/confirmStore";
 import { useIncomeStore } from "./incomeStore";
 import { useIncomeCategoryStore } from "../income-category/incomeCategoryStore";
-import BinSvgIcon from "../../assets/icons/bin-svg-icon";
-import EditSvgIcon from "../../assets/icons/edit-svg-icon";
-import ViewSvgIcon from "../../assets/icons/view-svg-icon";
-import AddNewButton from "../../components/buttons/AddNewButton";
-import FilterButton from "../../components/buttons/FilterButton";
-import BulkDeleteButton from "../../components/buttons/BulkDeleteButton";
-import AddIncome from "./addIncome";
+import BinIcon from "../../../assets/icons/binicon";
+import EditIcon from "../../../assets/icons/editicon";
+import ViewIcon from "../../../assets/icons/viewicon";
+import AddNewButton from "../../buttons/AddNewButton";
+import FilterButton from "../../buttons/FilterButton";
+import BulkDeleteButton from "../../buttons/BulkDeleteButton";
+import AddIncome from "./AddIncome";
 import EditIncome from "./EditIncome";
 import ViewIncome from "./ViewIncome";
 
@@ -25,7 +25,7 @@ const Incomes = () => {
     const confirmStore = useConfirmStore();
     const incomes = incomeStore.incomes;
     const incomeCategoryStore = useIncomeCategoryStore();
-    const incomeCategories = [];
+    let incomeCategories = [];
 
     const q_title = "";
     const selected_incomes = [];
@@ -258,15 +258,15 @@ const Incomes = () => {
                                     </td>
                                     <td className="min100 max100">{income.date}</td>
                                     <td className="table-action-btns">
-                                        <ViewSvgIcon
+                                        <ViewIcon
                                             color="#00CFDD"
                                             onClick={() => openViewIncomeModal(income.id)}
                                         />
-                                        <EditSvgIcon
+                                        <EditIcon
                                             color="#739EF1"
                                             onClick={() => openEditIncomeModal(income.id)}
                                         />
-                                        <BinSvgIcon color="#FF7474" onClick={() => deleteData(income.id)} />
+                                        <BinIcon color="#FF7474" onClick={() => deleteData(income.id)} />
                                     </td>
                                 </tr>
                             ))}

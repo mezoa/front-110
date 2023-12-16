@@ -1,8 +1,8 @@
-import { useState, useEffect } from "react";
-import CrossSvgIcon from "../../assets/icons/cross-svg-icon";
-import Loader from "../../components/shared/loader/Loader";
+import React, { useState, useEffect } from "react";
+import CrossIcon from "../../../assets/icons/crossicon";
+import Loader from "../../../components/shared/loader/Loader";
 import { useExpenseStore } from "./expenseStore";
-import Multiselect from "@vueform/multiselect";
+import Select from 'react-select'; // Import the react-select library
 
 const EditExpense = ({ expense_id, categories }) => {
     const [loading, setLoading] = useState(false);
@@ -41,7 +41,7 @@ const EditExpense = ({ expense_id, categories }) => {
                     <div className="modal-header">
                         <h5 className="modal-title">Edit Expense</h5>
                         <button type="button" className="close" onClick={closeEditExpenseModal}>
-                            <CrossSvgIcon />
+                            <CrossIcon />
                         </button>
                     </div>
 
@@ -70,16 +70,14 @@ const EditExpense = ({ expense_id, categories }) => {
                                         <p className="text-danger">
                                             {expenseStore.edit_expense_errors.categories}
                                         </p>
-                                        <Multiselect
-                                            searchable={true}
-                                            mode="tags"
-                                            hide-selected={false}
-                                            value={expense_data.categories}
+                                        <Select
                                             options={categories}
+                                            value={expense_data.categories}
                                             onChange={(value) =>
                                                 setExpenseData({ ...expense_data, categories: value })
                                             }
-                                        ></Multiselect>
+                                            isMulti
+                                        />
                                     </div>
                                     <div className="form-item">
                                         <label className="my-2">Expense Date</label>

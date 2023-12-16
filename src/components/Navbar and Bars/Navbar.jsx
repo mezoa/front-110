@@ -1,7 +1,7 @@
-import menuSvgIcon from "../assets/icons/menu-svg-icon";
-import userSvgIcon from "../assets/icons/user-svg-icon";
-import logoutSvgIcon from "../assets/icons/logout-svg-icon";
-import settingSvgIcon from "../assets/icons/setting-svg-icon";
+import MenuIcon from "../../assets/icons/menuicon";
+import UserIcon from "../../assets/icons/usericon";
+import LogoutIcon from "../../assets/icons/logouticon";
+import SettingIcon from "../../assets/icons/settingicon";
 import { useSidebar } from "../stores/sidebar";
 import { useState } from "react";
 
@@ -15,16 +15,16 @@ const Navbar = () => {
 
     return (
         <nav className="navbar navbar-header navbar-expand navbar-light">
-            <menuSvgIcon onClick={sidebarStore.toggle} />
+            <MenuIcon onClick={sidebarStore.toggle} />
             <ul className="navbar-nav d-flex align-items-center navbar-light ms-auto">
                 <div className="top-nav-item position-relative">
                     <span onClick={toggleUserDropDown}>
-                        <userSvgIcon width="25px" height="25px" />
+                        <UserIcon width="25px" height="25px" />
                     </span>
                     {userDropDown && (
                         <div className="top-nav-dropdown">
                             <a className="top-nav-dropdown-item" href="/logout">
-                                <logoutSvgIcon
+                                <LogoutIcon
                                     width="16px"
                                     height="16px"
                                     color="currentColor"
@@ -32,7 +32,7 @@ const Navbar = () => {
                                 <span className="ms-2">Logout </span>
                             </a>
                             {/* <a className="top-nav-dropdown-item" href="/logout">
-                                <settingSvgIcon
+                                <SettingIcon
                                     width="16px"
                                     height="16px"
                                     color="currentColor"

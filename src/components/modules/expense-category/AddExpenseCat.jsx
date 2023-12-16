@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import CrossSvgIcon from "../../assets/icons/cross-svg-icon";
+import CrossIcon from "../../../assets/icons/crossicon";
 import { useExpenseCategoryStore } from "./expenseCategoryStore";
 
 const AddExpenseCat = () => {
@@ -34,7 +34,7 @@ const AddExpenseCat = () => {
                     <div className="modal-header">
                         <h5 className="modal-title">Add New Expense Category</h5>
                         <button type="button" className="close">
-                            <CrossSvgIcon onClick={closeAddExpenseCatModal} />
+                            <CrossIcon onClick={closeAddExpenseCatModal} />
                         </button>
                     </div>
 

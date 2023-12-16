@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import crossSvgIcon from "../../../assets/icons/cross-svg-icon.vue";
+import CrossIcon from "../../../assets/icons/crossicon";
 
 const Notification = ({ data, close }) => {
     const barRef = useRef(null);
@@ -34,7 +34,7 @@ const Notification = ({ data, close }) => {
                 style={{ backgroundColor: "currentColor", height: "3px" }}
             ></div>
             <span className="close_notification_btn" onClick={close}>
-                <crossSvgIcon width="16px" height="16px" color="#FF7474" />
+                <CrossIcon width="16px" height="16px" color="#FF7474" />
             </span>
             <p className="notification-message">{data.message}</p>
         </div>

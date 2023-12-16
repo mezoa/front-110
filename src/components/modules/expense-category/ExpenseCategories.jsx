@@ -4,14 +4,14 @@ import Pagination from "../../shared/pagination/Pagination";
 import { useConfirmStore } from "../../shared/confirm-alert/confirmStore.js";
 import { useExpenseCategoryStore } from "./expenseCategoryStore";
 import BinIcon from "../../../assets/icons/binicon.jsx";
-import EditSvgIcon from "../../assets/icons/edit-svg-icon";
-import ViewSvgIcon from "../../assets/icons/view-svg-icon";
-import AddNewButton from "../../components/buttons/AddNewButton";
-import FilterButton from "../../components/buttons/FilterButton";
-import BulkDeleteButton from "../../components/buttons/BulkDeleteButton";
-import AddExpenseCat from "./AddExpenseCat";
-import EditExpenseCat from "./EditExpenseCat";
-import ViewExpenseCat from "./ViewExpenseCat";
+import EditIcon from "../../../assets/icons/editicon.jsx";
+import ViewIcon from "../../../assets/icons/viewicon.jsx";
+import AddNewButton from "../../buttons/AddNewButton.jsx";
+import FilterButton from "../../buttons/FilterButton.jsx";
+import BulkDeleteButton from "../../buttons/BulkDeleteButton.jsx";
+import AddExpenseCat from "./AddExpenseCat.jsx";
+import EditExpenseCat from "./EditExpenses.jsx";
+import ViewExpenseCat from "./ViewExpenseCat.jsx";
 
 const ExpenseCategories = () => {
     const [loading, setLoading] = useState(false);
@@ -157,8 +157,8 @@ const ExpenseCategories = () => {
                                 </td>
                                 <td className="min150 max150">{expense_cat.name}</td>
                                 <td className="table-action-btns">
-                                    <ViewSvgIcon color="#00CFDD" onClick={() => openViewExpenseCatModal(expense_cat.id)} />
-                                    <EditSvgIcon color="#739EF1" onClick={() => openEditExpenseCatModal(expense_cat.id)} />
+                                    <ViewIcon color="#00CFDD" onClick={() => openViewExpenseCatModal(expense_cat.id)} />
+                                    <EditIcon color="#739EF1" onClick={() => openEditExpenseCatModal(expense_cat.id)} />
                                     <BinIcon color="#FF7474" onClick={() => deleteData(expense_cat.id)} />
                                 </td>
                             </tr>

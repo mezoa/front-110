@@ -1,16 +1,16 @@
 import { useEffect, useState } from "react";
 import Loader from "../../shared/loader/Loader";
 import Pagination from "../../shared/pagination/Pagination";
-import { useConfirmStore } from "../../components/shared/confirm-alert/confirmStore";
+import { useConfirmStore } from "../../shared/confirm-alert/confirmStore";
 import { useExpenseStore } from "./expenseStore";
 import { useExpenseCategoryStore } from "../expense-category/expenseCategoryStore";
-import BinSvgIcon from "../../assets/icons/bin-svg-icon";
-import EditSvgIcon from "../../assets/icons/edit-svg-icon";
-import ViewSvgIcon from "../../assets/icons/view-svg-icon";
-import AddNewButton from "../../components/buttons/AddNewButton";
-import FilterButton from "../../components/buttons/FilterButton";
-import BulkDeleteButton from "../../components/buttons/BulkDeleteButton";
-import AddExpense from "./addexpense";
+import BinIcon from "../../../assets/icons/binicon";
+import EditIcon from "../../../assets/icons/editicon";
+import ViewIcon from "../../../assets/icons/viewicon";
+import AddNewButton from "../../buttons/AddNewButton";
+import FilterButton from "../../buttons/FilterButton";
+import BulkDeleteButton from "../../buttons/BulkDeleteButton";
+import AddExpense from "./AddExpense";
 import EditExpense from "./EditExpense";
 import ViewExpense from "./ViewExpense";
 
@@ -272,9 +272,9 @@ const Expense = () => {
                                     </td>
                                     <td className="min100 max100">{expense.date}</td>
                                     <td className="table-action-btns">
-                                        <ViewSvgIcon color="#00CFDD" onClick={() => openViewExpenseModal(expense.id)} />
-                                        <EditSvgIcon color="#739EF1" onClick={() => openEditExpenseModal(expense.id)} />
-                                        <BinSvgIcon color="#FF7474" onClick={() => deleteData(expense.id)} />
+                                        <ViewIcon color="#00CFDD" onClick={() => openViewExpenseModal(expense.id)} />
+                                        <EditIcon color="#739EF1" onClick={() => openEditExpenseModal(expense.id)} />
+                                        <BinIcon color="#FF7474" onClick={() => deleteData(expense.id)} />
                                     </td>
                                 </tr>
                             ))}

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import CrossSvgIcon from "../../assets/icons/cross-svg-icon";
-import Loader from "../../components/shared/loader/Loader";
+import CrossIcon from "../../../assets/icons/crossicon";
+import Loader from "../../shared/loader/Loader";
 import { useExpenseStore } from "./expenseStore";
 
 const ViewExpense = ({ expense_id, close, refreshData }) => {
@@ -30,7 +30,7 @@ const ViewExpense = ({ expense_id, close, refreshData }) => {
                     <div className="modal-header">
                         <h5 className="modal-title">Expense Record Details</h5>
                         <button type="button" className="close" onClick={closeViewExpenseModal}>
-                            <CrossSvgIcon />
+                            <CrossIcon />
                         </button>
                     </div>
 

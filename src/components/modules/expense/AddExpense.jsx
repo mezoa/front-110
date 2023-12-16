@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
-import CrossSvgIcon from "../../assets/icons/cross-svg-icon";
+import CrossIcon from "../../../assets/icons/crossicon";
 import { useExpenseStore } from "./expenseStore";
-import Multiselect from "@vueform/multiselect";
+import Select from "react-select";
 
 const AddExpense = ({ categories }) => {
     const expenseStore = useExpenseStore();
@@ -33,7 +33,7 @@ const AddExpense = ({ categories }) => {
                     <div className="modal-header">
                         <h5 className="modal-title">Add New Expense</h5>
                         <button type="button" className="close">
-                            <CrossSvgIcon onClick={closeAddExpenseModal} />
+                            <CrossIcon onClick={closeAddExpenseModal} />
                         </button>
                     </div>
 
@@ -62,10 +62,9 @@ const AddExpense = ({ categories }) => {
                                     {expenseStore.add_expense_errors.categories}
                                 </p>
 
-                                <Multiselect
-                                    searchable={true}
-                                    mode="tags"
-                                    hide-selected={false}
+                                <Select
+                                    isSearchable={true}
+                                    isMulti={true}
                                     value={expenseData.categories}
                                     options={categories}
                                     onChange={(value) =>
@@ -74,7 +73,7 @@ const AddExpense = ({ categories }) => {
                                             categories: value,
                                         })
                                     }
-                                ></Multiselect>
+                                />
                             </div>
                             <div className="form-item">
                                 <label className="my-2">Expense Date</label>

@@ -1,6 +1,6 @@
 import React from "react";
 import SideNavLink from "../components/SideNavLink";
-import crossSvgIcon from "../assets/icons/cross-svg-icon";
+import CrossIcon from "../../assets/icons/crossicon";
 import { useSidebar } from "../stores/sidebar";
 
 const Sidebar = () => {
@@ -61,7 +61,7 @@ const Sidebar = () => {
                         />
                     </div>
                     <div className="small-screen-menu-icon ms-3">
-                        <crossSvgIcon
+                        <CrossIcon
                             width="25px"
                             height="25px"
                             onClick={sidebarStore.toggle}

@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
-import CrossSvgIcon from "../../assets/icons/cross-svg-icon";
+import React, { useState, useEffect } from "react";
+import CrossIcon from "../../../assets/icons/crossicon";
 import { useIncomeStore } from "./incomeStore";
-import Multiselect from "@vueform/multiselect";
+import Select from "react-select";
 
 const AddIncome = ({ categories }) => {
     const [incomeData, setIncomeData] = useState({
@@ -40,7 +40,7 @@ const AddIncome = ({ categories }) => {
                     <div className="modal-header">
                         <h5 className="modal-title">Add New Income</h5>
                         <button type="button" className="close">
-                            <CrossSvgIcon onClick={closeAddIncomeModal} />
+                            <CrossIcon onClick={closeAddIncomeModal} />
                         </button>
                     </div>
 
@@ -66,16 +66,16 @@ const AddIncome = ({ categories }) => {
                                     {incomeStore.add_income_errors.categories}
                                 </p>
 
-                                <Multiselect
-                                    searchable={true}
-                                    mode="tags"
-                                    hide-selected={false}
+                                <Select
+                                    isSearchable={true}
+                                    isMulti={true}
+                                    hideSelectedOptions={false}
                                     value={incomeData.categories}
                                     options={categories}
                                     onChange={(value) =>
                                         setIncomeData({ ...incomeData, categories: value })
                                     }
-                                ></Multiselect>
+                                ></Select>
                             </div>
                             <div className="form-item">
                                 <label className="my-2">Income Date</label>

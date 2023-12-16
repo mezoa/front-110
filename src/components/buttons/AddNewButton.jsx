@@ -1,9 +1,9 @@
-import PlusSvg from "../../assets/icons/plus-svg-icon.vue";
+import PlusIcon from "../../assets/icons/plusicon";
 
 function AddNewButton() {
     return (
         <button className="btn btn-sm btn-primary m-1">
-            <PlusSvg color="white" />
+            <PlusIcon color="white" />
             <span className="ms-1 d-600-none">Add New</span>
         </button>
     );

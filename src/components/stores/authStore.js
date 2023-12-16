@@ -1,29 +1,42 @@
-import { defineStore } from "pinia";
-import { ref } from "vue";
+import { configureStore } from "@reduxjs/toolkit";
 import axios from "axios";
 
-export const useAuthStore = defineStore("auth", {
-    state: () => ({
-        fetched: false,
-        user: {},
-        authenticated: 0,
-    }),
+const initialState = {
+    fetched: false,
+    user: {},
+    authenticated: 0,
+};
 
-    getters: {},
+function authReducer(state = initialState, action) {
+    switch (action.type) {
+        case "SET_USER":
+            return {
+                ...state,
+                user: action.payload.user,
+                authenticated: action.payload.authenticated,
+            };
+        default:
+            return state;
+    }
+}
 
-    actions: {
-        async getAuthUser() {
-            try {
-                const response = await axios.get(`/api/users/authenticated-user`);
-                this.user = response.data.user;
-                this.authenticated = response.data.authenticated;
-            } catch (error) {
-                console.error(error);
-            }
-        },
-
-        // userCan(ability) {
-        //     return this.permissions.includes(ability);
-        // },
-    },
+export const store = configureStore({
+    reducer: authReducer
 });
+
+export const getAuthUser = () => {
+    return async (dispatch) => {
+        try {
+            const response = await axios.get(`/api/users/authenticated-user`);
+            dispatch({
+                type: "SET_USER",
+                payload: {
+                    user: response.data.user,
+                    authenticated: response.data.authenticated,
+                },
+            });
+        } catch (error) {
+            console.error(error);
+        }
+    };
+};

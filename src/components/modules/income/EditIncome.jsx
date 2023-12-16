@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
-import CrossSvgIcon from "../../assets/icons/cross-svg-icon";
-import Loader from "../../components/shared/loader/Loader";
+import CrossIcon from "../../../assets/icons/crossicon";
+import Loader from "../../shared/loader/Loader";
 import { useIncomeStore } from "./incomeStore";
-import Multiselect from "@vueform/multiselect";
+import Select from "react-select";
 
 const EditIncome = ({ income_id, categories }) => {
     const [loading, setLoading] = useState(false);
@@ -41,7 +41,7 @@ const EditIncome = ({ income_id, categories }) => {
                     <div className="modal-header">
                         <h5 className="modal-title">Edit Income</h5>
                         <button type="button" className="close">
-                            <CrossSvgIcon onClick={closeEditIncomeModal} />
+                            <CrossIcon onClick={closeEditIncomeModal} />
                         </button>
                     </div>
 
@@ -73,19 +73,17 @@ const EditIncome = ({ income_id, categories }) => {
                                         <p className="text-danger">
                                             {incomeStore.edit_income_errors.categories}
                                         </p>
-                                        <Multiselect
-                                            searchable={true}
-                                            mode="tags"
-                                            hide-selected={false}
-                                            value={income_data.categories}
+                                        <Select
+                                            isMulti
                                             options={categories}
+                                            value={income_data.categories}
                                             onChange={(value) =>
                                                 setIncomeData({
                                                     ...income_data,
                                                     categories: value,
                                                 })
                                             }
-                                        ></Multiselect>
+                                        />
                                     </div>
                                     <div className="form-item">
                                         <label className="my-2">Income Date</label>
