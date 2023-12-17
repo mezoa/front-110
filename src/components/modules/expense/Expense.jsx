@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
+import { useDispatch } from 'react-redux';
 import Loader from "../../shared/loader/Loader";
 import Pagination from "../../shared/pagination/Pagination";
 import { useConfirmStore } from "../../shared/confirm-alert/confirmStore";
@@ -14,6 +15,7 @@ import AddExpense from "./AddExpense";
 import EditExpense from "./EditExpense";
 import ViewExpense from "./ViewExpense";
 
+
 const Expense = () => {
     const [loading, setLoading] = useState(false);
     const [filterTab, setFilterTab] = useState(true);
@@ -21,6 +23,7 @@ const Expense = () => {
     const [showEditExpense, setShowEditExpense] = useState(false);
     const [showViewExpense, setShowViewExpense] = useState(false);
 
+    const dispatch = useDispatch();
     const expenseStore = useExpenseStore();
     const confirmStore = useConfirmStore();
     const [expenses, setExpenses] = useState([]);
@@ -28,26 +31,40 @@ const Expense = () => {
     const [expenseCategories, setExpenseCategories] = useState([]);
     const [q_title, setQTitle] = useState("");
     const [selected_expenses, setSelectedExpenses] = useState([]);
-    const [all_selectd, setAllSelectd] = useState(false);
-
+    const [all_selected, setAllSelected] = useState(false);
+    
     const select_all = () => {
-        if (all_selectd === false) {
+        if (all_selected === false) {
             setSelectedExpenses(expenseStore.expenses.map((element) => element.id));
-            setAllSelectd(true);
+            setAllSelected(true);
         } else {
-            setAllSelectd(false);
+            setAllSelected(false);
             setSelectedExpenses([]);
         }
     };
+
+    const fetchCategories = useCallback(async () => {
+        const response = await expenseCategoryStore.fetchCatList();
+        return response;
+    }, [dispatch]);
+    
+    useEffect(() => {
+        fetchData(1);
+        fetchCategories().then((response) => {
+            setExpenseCategories(response);
+        });
+    }, []);
+
+    
 
     const deleteData = async (id) => {
         confirmStore.show_box({ message: "Do you want to delete selected expense?" }).then(async () => {
             if (confirmStore.do_action === true) {
                 expenseStore.deleteExpense(id).then(() => {
                     expenseStore.fetchExpenses(expenseStore.current_page, expenseStore.limit, expenseStore.q_title);
-
+    
                     if (Array.isArray(id)) {
-                        setAllSelectd(false);
+                        setAllSelected(false);
                         setSelectedExpenses([]);
                     }
                 });
@@ -68,7 +85,7 @@ const Expense = () => {
     const fetchData = async (page = expenseStore.current_page, limit = expenseStore.limit, q_title = expenseStore.q_title) => {
         setLoading(true);
 
-        setAllSelectd(false);
+        setAllSelected(false);
         setSelectedExpenses([]);
 
         try {
@@ -81,13 +98,9 @@ const Expense = () => {
         }
     };
 
-    useEffect(() => {
-        fetchData(1);
-        expenseCategoryStore.fetchCatList().then((response) => {
-            setExpenseCategories(response);
-        });
-    }, []);
+    
 
+    
     return (
         <div>
             <div className="page-top-box mb-2 d-flex flex-wrap">
@@ -123,7 +136,7 @@ const Expense = () => {
                                 }}
                             >
                                 <option value="">select category</option>
-                                {expenseCategories.map((expenseCategory) => (
+                                {(expenseCategories || []).map((expenseCategory) => (
                                     <option key={expenseCategory.value} value={expenseCategory.value}>
                                         {expenseCategory.label}
                                     </option>
@@ -230,12 +243,12 @@ const Expense = () => {
                         <thead className="thead-dark">
                             <tr>
                                 <th>
-                                    <input
-                                        type="checkbox"
-                                        className="form-check-input"
-                                        onClick={select_all}
-                                        checked={all_selectd}
-                                    />
+                                <input
+                                    type="checkbox"
+                                    className="form-check-input"
+                                    onChange={select_all}
+                                    checked={all_selected}
+                                />
                                 </th>
                                 <th>Title</th>
                                 <th>Amount</th>
@@ -251,11 +264,15 @@ const Expense = () => {
                                         <input
                                             type="checkbox"
                                             className="form-check-input"
+                                            // Check the checkbox if the current expense's id is in the selected_expenses array
                                             checked={selected_expenses.includes(expense.id)}
                                             onChange={(e) => {
+                                                // If the checkbox is checked
                                                 if (e.target.checked) {
+                                                    // Add the current expense's id to the selected_expenses array
                                                     setSelectedExpenses([...selected_expenses, expense.id]);
                                                 } else {
+                                                    // If the checkbox is not checked, remove the current expense's id from the selected_expenses array
                                                     setSelectedExpenses(selected_expenses.filter((id) => id !== expense.id));
                                                 }
                                             }}

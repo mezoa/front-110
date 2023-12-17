@@ -46,8 +46,9 @@ export const useIncomeStore = () => {
 
     const fetchIncomes = async (page, limit, q_title = "") => {
         try {
+          const incomes = state.incomes || {};
           const response = await axios.get(
-            `/api/incomes?page=${page}&limit=${limit}&title=${q_title}&category=${state.incomes.q_category}&start_amount=${state.incomes.q_start_amount}&end_amount=${state.incomes.q_end_amount}&start_date=${state.incomes.q_start_date}&end_date=${state.incomes.q_end_date}&sort_column=${state.incomes.q_sort_column}&sort_order=${state.incomes.q_sort_order}`
+            `/api/incomes?page=${page}&limit=${limit}&title=${q_title}&category=${incomes.q_category}&start_amount=${incomes.q_start_amount}&end_amount=${incomes.q_end_amount}&start_date=${incomes.q_start_date}&end_date=${incomes.q_end_date}&sort_column=${incomes.q_sort_column}&sort_order=${incomes.q_sort_order}`
           );
           dispatch({ type: "SET_INCOMES", payload: response.data.data });
           // ... (rest of your code)

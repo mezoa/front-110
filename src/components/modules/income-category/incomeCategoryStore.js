@@ -1,8 +1,8 @@
 import axios from "axios";
-import { applyMiddleware } from 'redux';
-
+import { createStore, applyMiddleware } from 'redux';
 import formatValidationErrors from "../../utils/format-validation-error";
 import { useDispatch } from "react-redux";
+import thunk from 'redux-thunk';
 
 export const useIncomeCategoryStore = () => {
     const dispatch = useDispatch();
@@ -29,8 +29,16 @@ export const useIncomeCategoryStore = () => {
         },
     };
     
+    const rootReducer = (state = initialState, action) => {
+        switch (action.type) {
+            // Handle your actions here
+            default:
+                return state;
+        }
+    };
 
     const store = createStore(rootReducer, initialState, applyMiddleware(thunk));
+    
 
     const resetCurrentIncomeCatData = () => {
         dispatch({ type: "RESET_CURRENT_INCOME_CAT_DATA" });

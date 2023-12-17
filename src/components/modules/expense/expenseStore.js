@@ -2,8 +2,10 @@ import axios from "axios";
 import formatValidationErrors from "../../utils/format-validation-error"
 import { configureStore } from "@reduxjs/toolkit";
 import { useDispatch } from "react-redux";
+import { useMemo } from "react";
 
-export const useExpenseStore = configureStore({
+
+export const useExpenseStore = () => configureStore({
     reducer: {
         expense: (state = {
             current_page: 1,
@@ -134,99 +136,12 @@ export const useNotificationStore = configureStore({
 export function useExpenseActions() {
     const dispatch = useDispatch();
 
-    function resetCurrentExpenseData() {
-        dispatch({ type: "RESET_CURRENT_EXPENSE_DATA" });
-    }
-
-    async function fetchExpenses(page, limit, q_title = "") {
-        try {
-            const response = await axios.get(
-                `/api/expenses?page=${page}&limit=${limit}&title=${q_title}&category=${this.q_category}&start_amount=${this.q_start_amount}&end_amount=${this.q_end_amount}&start_date=${this.q_start_date}&end_date=${this.q_end_date}&sort_column=${this.q_sort_column}&sort_order=${this.q_sort_order}`
-            );
-            dispatch({ type: "FETCH_EXPENSES", payload: response.data.data });
-            if (response.data.meta) {
-                dispatch({ type: "SET_TOTAL_PAGES", payload: response.data.meta.last_page });
-                dispatch({ type: "SET_CURRENT_PAGE", payload: response.data.meta.current_page });
-                dispatch({ type: "SET_LIMIT", payload: response.data.meta.per_page });
-                dispatch({ type: "SET_Q_TITLE", payload: q_title });
-            }
-            return response.data.data;
-        } catch (errors) {
-            throw errors;
-        }
-    }
-
-    async function fetchExpense(id) {
-        try {
-            const response = await axios.get(`/api/expenses/${id}`);
-            dispatch({ type: "FETCH_EXPENSE", payload: response.data.data });
-            dispatch({ type: "SET_CATEGORIES_DETAILS", payload: response.data.data.categories });
-            dispatch({ type: "SET_CATEGORIES", payload: response.data.data.categories.map((item) => item.value) });
-            return response.data.data;
-        } catch (errors) {
-            throw errors;
-        }
-    }
-
-    async function addExpense(data) {
-        try {
-            const response = await axios.post(`/api/expenses`, data);
-            resetCurrentExpenseData();
-            dispatch({ type: "PUSH_NOTIFICATION", payload: { message: "Expense Added Successfully", type: "success", time: 2000 } });
-            return response;
-        } catch (error) {
-            dispatch({ type: "PUSH_NOTIFICATION", payload: { message: "Error Occurred", type: "error", time: 2000 } });
-
-            if (error.response.status == 422) {
-                dispatch({ type: "SET_ADD_EXPENSE_ERRORS", payload: formatValidationErrors(error.response.data.errors) });
-            }
-            throw error;
-        }
-    }
-
-    async function editExpense(data) {
-        try {
-            const response = await axios.put(`/api/expenses/${this.edit_expense_id}`, data);
-            resetCurrentExpenseData();
-            dispatch({ type: "PUSH_NOTIFICATION", payload: { message: "expense record updated successfully", type: "success" } });
-            return response;
-        } catch (errors) {
-            console.log(errors);
-            dispatch({ type: "PUSH_NOTIFICATION", payload: { message: "Error Occurred", type: "error" } });
-
-            if (errors.response.status == 422) {
-                dispatch({ type: "SET_EDIT_EXPENSE_ERRORS", payload: formatValidationErrors(errors.response.data.errors) });
-            }
-            throw errors;
-        }
-    }
-
-    async function deleteExpense(id) {
-        try {
-            const response = await axios.delete(`/api/expenses/${id}`);
-            if (
-                this.expenses.length == 1 ||
-                (Array.isArray(id) && id.length == this.expenses.length)
-            ) {
-                this.current_page == 1
-                    ? (this.current_page = 1)
-                    : (this.current_page -= 1);
-            }
-
-            resetCurrentExpenseData();
-            dispatch({ type: "PUSH_NOTIFICATION", payload: { message: "expense deleted successfully", type: "success", time: 2000 } });
-            return response;
-        } catch (error) {
-            throw error;
-        }
-    }
-
-    return {
-        resetCurrentExpenseData,
-        fetchExpenses,
-        fetchExpense,
-        addExpense,
-        editExpense,
-        deleteExpense,
-    };
+    return useMemo(() => ({
+        resetCurrentExpenseData: () => dispatch({ type: "RESET_CURRENT_EXPENSE_DATA" }),
+        fetchExpenses: (page, limit, q_title = "") => dispatch(fetchExpenses(page, limit, q_title)),
+        fetchExpense: (id) => dispatch(fetchExpense(id)),
+        addExpense: (data) => dispatch(addExpense(data)),
+        editExpense: (data) => dispatch(editExpense(data)),
+        deleteExpense: (id) => dispatch(deleteExpense(id)),
+    }), [dispatch]);
 }

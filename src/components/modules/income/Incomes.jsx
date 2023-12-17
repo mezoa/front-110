@@ -121,7 +121,7 @@ const Incomes = () => {
                                 onChange={(e) => fetchData(1)}
                             >
                                 <option value="">select category</option>
-                                {incomeCategories.map((incomeCategory) => (
+                                {(incomeCategories || []).map((incomeCategory) => (
                                     <option key={incomeCategory.value} value={incomeCategory.value}>
                                         {incomeCategory.label}
                                     </option>
@@ -214,7 +214,7 @@ const Incomes = () => {
                                         type="checkbox"
                                         className="form-check-input"
                                         onClick={select_all}
-                                        checked={all_selectd}
+                                        defaultChecked={all_selectd}
                                     />
                                 </th>
                                 <th>Title</th>
@@ -224,57 +224,58 @@ const Incomes = () => {
                                 <th className="table-action-col">Action</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            {incomes.map((income) => (
-                                <tr key={income.id}>
-                                    <td>
-                                        <input
-                                            type="checkbox"
-                                            className="form-check-input"
-                                            onChange={(e) => {
-                                                if (e.target.checked) {
-                                                    selected_incomes.push(income.id);
-                                                } else {
-                                                    const index = selected_incomes.indexOf(income.id);
-                                                    if (index > -1) {
-                                                        selected_incomes.splice(index, 1);
+                            <tbody>
+                                {(incomes || []).map((income) => (
+                                    <tr key={income.id}>
+                                        <td>
+                                            <input
+                                                type="checkbox"
+                                                className="form-check-input"
+                                                defaultChecked={false}
+                                                onChange={(e) => {
+                                                    if (e.target.checked) {
+                                                        selected_incomes.push(income.id);
+                                                    } else {
+                                                        const index = selected_incomes.indexOf(income.id);
+                                                        if (index > -1) {
+                                                            selected_incomes.splice(index, 1);
+                                                        }
                                                     }
-                                                }
-                                            }}
-                                            value={income.id}
-                                        />
-                                    </td>
-                                    <td className="min150 max150">{income.title}</td>
-                                    <td className="min100 max100">{income.amount}</td>
-                                    <td className="min200 max200">
-                                        {income.categories.map((income_cat) => (
-                                            <span
-                                                key={income_cat.value}
-                                                className="badge bg-primary m-1 px-2 shadow-sm py-1"
-                                            >
-                                                {income_cat.label}
-                                            </span>
-                                        ))}
-                                    </td>
-                                    <td className="min100 max100">{income.date}</td>
-                                    <td className="table-action-btns">
-                                        <ViewIcon
-                                            color="#00CFDD"
-                                            onClick={() => openViewIncomeModal(income.id)}
-                                        />
-                                        <EditIcon
-                                            color="#739EF1"
-                                            onClick={() => openEditIncomeModal(income.id)}
-                                        />
-                                        <BinIcon color="#FF7474" onClick={() => deleteData(income.id)} />
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
+                                                }}
+                                                value={income.id}
+                                            />
+                                        </td>
+                                        <td className="min150 max150">{income.title}</td>
+                                        <td className="min100 max100">{income.amount}</td>
+                                        <td className="min200 max200">
+                                            {(income.categories || []).map((income_cat) => (
+                                                <span
+                                                    key={income_cat.value}
+                                                    className="badge bg-primary m-1 px-2 shadow-sm py-1"
+                                                >
+                                                    {income_cat.label}
+                                                </span>
+                                            ))}
+                                        </td>
+                                        <td className="min100 max100">{income.date}</td>
+                                        <td className="table-action-btns">
+                                            <ViewIcon
+                                                color="#00CFDD"
+                                                onClick={() => openViewIncomeModal(income.id)}
+                                            />
+                                            <EditIcon
+                                                color="#739EF1"
+                                                onClick={() => openEditIncomeModal(income.id)}
+                                            />
+                                            <BinIcon color="#FF7474" onClick={() => deleteData(income.id)} />
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
                     </table>
                 </div>
             )}
-            {!loading && incomes.length > 0 && (
+            {!loading && (incomes || []).length > 0 && (
                 <Pagination
                     total_pages={incomeStore.total_pages}
                     current_page={incomeStore.current_page}
