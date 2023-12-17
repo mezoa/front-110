@@ -1,92 +1,93 @@
-import React from "react";
-import { useNavigate } from "react-router-dom";
-import SideNavLink from "./SideNavLink";
-import CrossIcon from "../../assets/icons/crossicon";
-import { useSidebar } from "../stores/sidebar";
-//import '../../assets/css/app.css';
+import React, { useState } from "react";
 import './Sidebar.css';
-import iptracker from "../../assets/img/iptracker.png";
+import logoImage from '../../assets/img/iptracker.png';
 
 const Sidebar = () => {
-    const sidebarStore = useSidebar();
-    const navigate = useNavigate();
+    const [incomesCollapsed, setIncomesCollapsed] = useState(false);
+    const [expensesCollapsed, setExpensesCollapsed] = useState(false);
 
-    const navlinks = [
-        {
-            label: "dashboard",
-            link: "/dashboard",
-            icon_name: "dashboard",
-        },
-        {
-            label: "income",
-            link: "/incomes",
-            icon_name: "wallet",
-            sub_links: [
-                {
-                    label: "income list",
-                    link: "/incomes",
-                },
-                {
-                    label: "income categories",
-                    link: "/income-categories",
-                },
-            ],
-        },
-        {
-            label: "expense",
-            link: "/expenses",
-            icon_name: "bankcard",
-            sub_links: [
-                {
-                    label: "expense list",
-                    link: "/expenses",
-                },
-                {
-                    label: "expense categories",
-                    link: "/expense-categories",
-                },
-            ],
-        },
-        {
-            label: "site visitors",
-            link: "/visitors",
-            icon_name: "customer",
-        },
-        {
-            label: "pages",
-            link: "/pages",
-            icon_name: "pages",
-        },
-    ];
+    const handleIncomesClick = () => {
+        setIncomesCollapsed(!incomesCollapsed);
+    };
+
+    const handleExpensesClick = () => {
+        setExpensesCollapsed(!expensesCollapsed);
+    };
 
     return (
-        <div id="sidebar" className={sidebarStore.open ? "active" : ""}>
-            <div className="sidebar-wrapper active">
-                <div className="sidebar-header d-flex">
-                    <div>
-                        <img
-                            src={iptracker}
-                            className="cursor-pointer img-fluid"
-                            onClick={() => navigate("/admin")}
-                            alt="EXP/IP TRACKER"
-                        />
-                    </div>
-                    <div className="small-screen-menu-icon ms-3">
-                        <CrossIcon
-                            width="25px"
-                            height="25px"
-                            onClick={() => sidebarStore.open = !sidebarStore.open} // toggle the open state
-                        />
-                    </div>
-                </div>
-                <div className="sidebar-menu">
-                    <ul className="menu">
-                        {navlinks.map((link) => (
-                            <SideNavLink key={link.link} link_details={link} />
-                        ))}
+        <div className="sidebar" id="sidebar">
+            <ul className="sidebar-nav" id="sidebar-nav">
+                <li className="nav-item">
+                    {/* Logo */}
+                    <img
+                        src={logoImage}
+                        alt="Logo"
+                        className="logo"
+                        height="100px"
+                        margin="40px"
+                    />
+                </li>
+                <li className="nav-item">
+                    <a className="nav-link" href="/dashboard">
+                        <i className="bi bi-menu-button-wide"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li className="nav-item">
+                    <a
+                        className={`nav-link ${incomesCollapsed ? 'collapsed' : ''}`}
+                        data-bs-target="#incomes-nav"
+                        data-bs-toggle="collapse"
+                        href="#"
+                        onClick={handleIncomesClick}
+                    >
+                        <i className="bi bi-menu-button-wide"></i>
+                        <span>Incomes</span>
+                        <i className={`bi bi-chevron-${incomesCollapsed ? 'down' : 'up'} ms-auto`}></i>
+                    </a>
+                    <ul className={`nav-content collapse ${incomesCollapsed ? 'show' : ''}`} id="incomes-nav" data-bs-parent="#sidebar-nav">
+                        <li className="dropdown-item">
+                            <a href="/incomes">
+                                <i className="bi bi-circle"></i>
+                                <span>Income list</span>
+                            </a>
+                        </li>
+                        <li className="dropdown-item">
+                            <a href="/income-categories">
+                                <i className="bi bi-circle"></i>
+                                <span>Income categories</span>
+                            </a>
+                        </li>
                     </ul>
-                </div>
-            </div>
+                </li>
+                <li className="nav-item">
+                    <a
+                        className={`nav-link ${expensesCollapsed ? 'collapsed' : ''}`}
+                        data-bs-target="#expenses-nav"
+                        data-bs-toggle="collapse"
+                        href="#"
+                        onClick={handleExpensesClick}
+                    >
+                        <i className="bi bi-menu-button-wide"></i>
+                        <span>Expenses</span>
+                        <i className={`bi bi-chevron-${expensesCollapsed ? 'down' : 'up'} ms-auto`}></i>
+                    </a>
+                    <ul className={`nav-content collapse ${expensesCollapsed ? 'show' : ''}`} id="expenses-nav" data-bs-parent="#sidebar-nav">
+                        <li className="dropdown-item">
+                            <a href="/expenses">
+                                <i className="bi bi-circle"></i>
+                                <span>Expense list</span>
+                            </a>
+                        </li>
+                        <li className="dropdown-item">
+                            <a href="/expense-categories">
+                                <i className="bi bi-circle"></i>
+                                <span>Expense categories</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
         </div>
     );
 };

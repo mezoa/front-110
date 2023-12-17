@@ -65,6 +65,21 @@ svg {
 #app {
     position: relative
 }
+.app-container {
+    display: flex;
+    height: 100vh; /* Full height */
+  }
+  
+  .sidebar-container {
+    flex: 0.2; /* 30% of the container width */
+    height: 100%;
+    
+  }
+  
+  .route-container {
+    flex: 0.8; /* 70% of the container width */
+    overflow: auto; /* Add scroll if content overflows */
+  }
 
 #main {
     margin-left: 260px;
@@ -823,26 +838,26 @@ footer {
 }
 
 #sidebar.active .sidebar-wrapper {
-    left: 0
+    left: 0 !important;
 }
 
 #sidebar:not(.active)~#main {
-    margin-left: 0
+    margin-left: 0 !important;
 }
 
 .sidebar-wrapper {
-    overflow: scroll;
-    width: 260px;
-    height: 100vh;
-    position: fixed;
-    top: 0;
-    z-index: 10;
-    background-color: #fff;
-    bottom: 0;
-    border-right: 1px solid #eee;
-    box-shadow: 0 0 10px #ececec;
-    left: -260px;
-    transition: left .6s ease-out
+    overflow: scroll !important;
+    width: 260px !important;
+    height: 100vh !important;
+    position: fixed !important;
+    top: 0 !important;
+    z-index: 10 !important;
+    background-color: #fff !important;
+    bottom: 0 !important;
+    border-right: 1px solid #eee !important;
+    box-shadow: 0 0 10px #ececec !important;
+    left: -260px !important;
+    transition: left .6s ease-out !important;
 }
 
 .sidebar-wrapper .sidebar-header {

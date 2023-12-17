@@ -22,7 +22,7 @@ const Login = () => {
                       <label htmlFor="email">Email</label>
                       <div className="text-danger my-1">email error</div>
                       <input type="email" id="email" className="form-control" name="email"
-                        value="admin@finnaf.com"
+                       
                       />
                     </div>
                   </div>
@@ -31,7 +31,7 @@ const Login = () => {
                       <label htmlFor="password">Password</label>
                       <div className="text-danger my-1">password error</div>
                       <input type="password" id="password" className="form-control" name="password"
-                        value="**finnaf**"
+                      
                       />
                     </div>
                   </div>

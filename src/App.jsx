@@ -16,20 +16,25 @@ import Sidebar from './components/NavbarBars/Sidebar'; // Check this import path
 function App() {
   return (
     <Router>
-      <Sidebar />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/incomes" element={<Incomes />} />
-        <Route path="/income-categories" element={<IncomeCategories />} />
-        <Route path="/expenses" element={<Expenses />} />
-        <Route path="/expense-categories" element={<ExpenseCategories />} />
-        <Route path="/visitors" element={<Visitors />} />
-      </Routes>
+      <div className="app-container">
+        <div className="sidebar-container">
+          <Sidebar />
+        </div>
+        <div className="route-container">
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/incomes" element={<Incomes />} />
+            <Route path="/income-categories" element={<IncomeCategories />} />
+            <Route path="/expenses" element={<Expenses />} />
+            <Route path="/expense-categories" element={<ExpenseCategories />} />
+            <Route path="/visitors" element={<Visitors />} />
+          </Routes>
+        </div>
+      </div>
     </Router>
   );
 }
-
 export default App;

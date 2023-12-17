@@ -1,151 +1,163 @@
-#sidebar.active .sidebar-wrapper {
-    left: 0
-}
+/* Place these styles in your CSS file */
 
-#sidebar:not(.active)~#main {
-    margin-left: 0
-}
-
-.sidebar-wrapper {
-    overflow: scroll;
-    width: 260px;
-    height: 100vh;
+/*--------------------------------------------------------------
+# Sidebar
+--------------------------------------------------------------*/
+.sidebar {
     position: fixed;
-    top: 0;
-    z-index: 10;
-    background-color: #fff;
-    bottom: 0;
-    border-right: 1px solid #eee;
-    box-shadow: 0 0 10px #ececec;
-    left: -260px;
-    transition: left .6s ease-out
-}
-
-.sidebar-wrapper .sidebar-header {
-    padding: 30px;
-    position: sticky;
-    position: -webkit-sticky;
     top: 0%;
-    background-color: #ffffff;
-    z-index: 10;
-}
-
-.sidebar-wrapper .sidebar-header img {
-    width: 100%;
-}
-
-.sidebar-wrapper .sidebar-toggler.x {
-    position: absolute;
-    right: 0;
-    top: .5rem;
-    display: none
-}
-
-.sidebar-wrapper .menu {
-    padding-left: 0;
-
-}
-
-.sidebar-wrapper .menu .sidebar-title {
-    padding: 1.5rem 1.8rem .5rem;
-    font-size: .8rem;
+    left: 0;
+    bottom: 0;
+    width: 300px;
+    z-index: 996;
+    transition: all 0.3s;
+    padding: 20px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #aab7cf transparent;
+    box-shadow: 0px 0px 20px rgba(1, 41, 112, 0.1);
+    background-color: #fff;
+  }
+ 
+  @media (max-width: 1199px) {
+    .sidebar {
+      left: -300px;
+    }
+  }
+  
+  .sidebar::-webkit-scrollbar {
+    width: 5px;
+    height: 8px;
+    background-color: #fff;
+  }
+  
+  .sidebar::-webkit-scrollbar-thumb {
+    background-color: #aab7cf;
+  }
+  
+  @media (min-width: 1200px) {
+    #main,
+    #footer {
+      margin-left: 300px;
+    }
+  }
+  
+  @media (max-width: 1199px) {
+    .toggle-sidebar .sidebar {
+      left: 0;
+    }
+  }
+  
+  @media (min-width: 1200px) {
+    .toggle-sidebar #main,
+    .toggle-sidebar #footer {
+      margin-left: 0;
+    }
+  
+    .toggle-sidebar .sidebar {
+      left: -300px;
+    }
+  }
+  
+  .sidebar-nav {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+  
+  .sidebar-nav li {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+  
+  .sidebar-nav .nav-item {
+    margin-bottom: 5px;
+  }
+  
+  .sidebar-nav .nav-heading {
+    font-size: 11px;
+    text-transform: uppercase;
+    color: #899bbd;
     font-weight: 600;
-    color: #888;
-    text-transform: uppercase
-}
-
-.sidebar-wrapper .menu .sidebar-link {
-    display: block;
-    padding: .7rem 1.5rem;
-    font-size: .85rem;
+    margin: 10px 0 5px 15px;
+  }
+  
+  .sidebar-nav .nav-link {
     display: flex;
     align-items: center;
-    transition: all .5s
-}
-
-.sidebar-wrapper .menu .sidebar-link:hover span {
-    opacity: 1
-}
-
-.sidebar-wrapper .menu .sidebar-link>span {
-    color: #053382;
-    font-weight: 500;
-    margin-left: 1rem;
-    opacity: .8
-}
-
-.sidebar-wrapper .menu .sidebar-item {
+    font-size: 15px;
+    font-weight: 600;
+    color: #4154f1;
+    transition: 0.3;
+    background: #f6f9ff;
+    padding: 10px 15px;
+    border-radius: 4px;
+  }
+  
+  .sidebar-nav .nav-link i {
+    font-size: 16px;
+    margin-right: 10px;
+    color: #4154f1;
+  }
+  
+  .sidebar-nav .nav-link.collapsed {
+    color: #012970;
+    background: #fff;
+  }
+  
+  .sidebar-nav .nav-link.collapsed i {
+    color: #899bbd;
+  }
+  
+  .sidebar-nav .nav-link:hover {
+    color: #4154f1;
+    background: #f6f9ff;
+  }
+  
+  .sidebar-nav .nav-link:hover i {
+    color: #4154f1;
+  }
+  
+  .sidebar-nav .nav-link .bi-chevron-down {
+    margin-right: 0;
+    transition: transform 0.2s ease-in-out;
+  }
+  
+  .sidebar-nav .nav-link:not(.collapsed) .bi-chevron-down {
+    transform: rotate(180deg);
+  }
+  
+  .sidebar-nav .nav-content {
+    padding: 5px 0 0 0;
+    margin: 0;
     list-style: none;
-    margin-top: .5rem;
-    position: relative;
-    cursor: pointer;
-    user-select: none;
-    text-transform: uppercase;
-}
-
-.sidebar-wrapper .menu .sidebar-item.has-sub .sidebar-link:after {
-    content: url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-down"><path stroke="gray" stroke-width="1" d="M6 9l6 6 6-6"/></svg>');
-    position: absolute;
-    color: #ccc;
-    right: 15px;
-    top: 12px;
-    display: block
-}
-
-.sidebar-wrapper .menu .sidebar-item.active .sidebar-link {
-    background-color: #e8f3ff;
-}
-
-.sidebar-wrapper .menu .sidebar-item.active .sidebar-link:before {
-    content: "";
-    position: absolute;
-    left: 0;
-    height: 100%;
-    top: 0;
-    bottom: 0;
-    background-color: rgba(46, 170, 244, .5);
-    width: 5px
-}
-
-.sidebar-wrapper .menu .submenu {
-    list-style: none;
-    display: none;
-}
-
-.sidebar-wrapper .menu .submenu.active {
-    display: block;
-}
-
-.sidebar-wrapper .menu .sidebar-sublink {
-    padding: .7rem 1.7rem;
-    display: block;
-    color: #676767;
-    font-size: .75rem;
-    font-weight: 500;
-    letter-spacing: .5px;
-    transition: all .2s;
-}
-
-.sidebar-item svg {
-    width: 20px;
-    height: 20px;
-    fill: #0d6efd;
-}
-
-.sidebar-wrapper .menu .sidebar-sublink:hover {
-    margin-left: .3rem
-}
-
-.sidebar-wrapper .menu .sidebar-sublink.active {
-    color: #0d6efd;
-}
-
-@media screen and (max-width:767px) {
-    .sidebar-wrapper {
-        left: -270px
-    }
-
-    .sidebar-wrapper .sidebar-toggler.x {
-        display: block
-    }
-}
+  }
+  
+  .sidebar-nav .nav-content a {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    font-weight: 600;
+    color: #012970;
+    transition: 0.3;
+    padding: 10px 0 10px 40px;
+    transition: 0.3s;
+  }
+  
+  .sidebar-nav .nav-content a i {
+    font-size: 6px;
+    margin-right: 8px;
+    line-height: 0;
+    border-radius: 50%;
+  }
+  
+  .sidebar-nav .nav-content a:hover,
+  .sidebar-nav .nav-content a.active {
+    color: #4154f1;
+  }
+  
+  .sidebar-nav .nav-content a.active i {
+    background-color: #4154f1;
+  }
+  

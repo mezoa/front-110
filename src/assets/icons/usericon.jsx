@@ -1,13 +1,6 @@
-import { defineProps } from 'vue';
+import React from 'react';
 
 export default function UserIcon(props) {
-    defineProps({
-        color: String,
-        background: String,
-        width: String,
-        height: String,
-    });
-
     return (
         <svg
             fill={props.color ?? '#757779'}
