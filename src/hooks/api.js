@@ -8,7 +8,7 @@ const useApi = () => {
 
   useEffect(() => {
     const api = axios.create({
-      baseURL: 'http://your-backend-url.com/api', // Replace with your Laravel backend URL
+      baseURL: 'http://127.0.0.1:8000/api', // Replace with your Laravel backend URL
     });
 
     const fetchData = async () => {
