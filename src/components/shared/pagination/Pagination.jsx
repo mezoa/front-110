@@ -3,6 +3,14 @@ import React, { useState } from "react";
 function Pagination({ total_pages, current_page, per_page }) {
     const [item_per_page, setItemPerPage] = useState(per_page);
 
+    const currentPageNumber = Number(current_page);
+
+    if (isNaN(currentPageNumber)) {
+        // Handle the error here
+        console.error('current_page is not a number');
+        return null;
+    }
+    
     function pageChange(perpage) {
         setItemPerPage(perpage);
         emit("perPageChange", parseInt(perpage));
@@ -31,9 +39,9 @@ function Pagination({ total_pages, current_page, per_page }) {
             >
                 {/* prev */}
                 <li
-                    onClick={() => emit("pageChange", parseInt(current_page) - 1)}
+                    onClick={() => emit("pageChange", parseInt(currentPageNumber) - 1)}
                     className={`page-item us-none cursor-pointer ${
-                        current_page == 1 ? "d-none" : ""
+                        currentPageNumber == 1 ? "d-none" : ""
                     }`}
                 >
                     <span className="page-link"> Prev</span>
@@ -43,9 +51,9 @@ function Pagination({ total_pages, current_page, per_page }) {
                 <li
                     onClick={() => emit("pageChange", 1)}
                     className={`page-item us-none cursor-pointer ${
-                        current_page == 1 ||
-                        parseInt(current_page) - 1 == 1 ||
-                        parseInt(current_page) - 2 == 1
+                        currentPageNumber == 1 ||
+                        parseInt(currentPageNumber) - 1 == 1 ||
+                        parseInt(currentPageNumber) - 2 == 1
                             ? "d-none"
                             : ""
                     }`}
@@ -58,53 +66,53 @@ function Pagination({ total_pages, current_page, per_page }) {
 
                 {/* current-2 */}
                 <li
-                    onClick={() => emit("pageChange", parseInt(current_page) - 2)}
+                    onClick={() => emit("pageChange", parseInt(currentPageNumber) - 2)}
                     className={`page-item us-none cursor-pointer ${
-                        current_page == 1 || parseInt(current_page) - 1 == 1 ? "d-none" : ""
+                        currentPageNumber == 1 || parseInt(currentPageNumber) - 1 == 1 ? "d-none" : ""
                     }`}
                 >
-                    <span className="page-link"> {current_page - 2} </span>
+                    <span className="page-link"> {currentPageNumber - 2} </span>
                 </li>
 
                 {/* current-1 */}
                 <li
-                    onClick={() => emit("pageChange", parseInt(current_page) - 1)}
+                    onClick={() => emit("pageChange", parseInt(currentPageNumber) - 1)}
                     className={`page-item us-none cursor-pointer ${
-                        current_page == 1 ? "d-none" : ""
+                        currentPageNumber == 1 ? "d-none" : ""
                     }`}
                 >
-                    <span className="page-link"> {current_page - 1} </span>
+                    <span className="page-link"> {currentPageNumber - 1} </span>
                 </li>
 
                 {/* current */}
                 <li className="page-item us-none cursor-pointer active">
                     <span className="page-link" href="#">
-                        {current_page}
+                        {currentPageNumber}
                     </span>
                 </li>
 
                 {/* current+1 */}
                 <li
-                    onClick={() => emit("pageChange", parseInt(current_page) + 1)}
+                    onClick={() => emit("pageChange", parseInt(currentPageNumber) + 1)}
                     className={`page-item us-none cursor-pointer ${
-                        current_page == total_pages ? "d-none" : ""
+                        currentPageNumber == total_pages ? "d-none" : ""
                     }`}
                 >
-                    <span className="page-link"> {parseInt(current_page) + 1}</span>
+                    <span className="page-link"> {parseInt(currentPageNumber) + 1}</span>
                 </li>
 
                 {/* current+2 */}
                 <li
-                    onClick={() => emit("pageChange", parseInt(current_page) + 2)}
+                    onClick={() => emit("pageChange", parseInt(currentPageNumber) + 2)}
                     className={`page-item us-none cursor-pointer ${
-                        parseInt(current_page) == total_pages ||
-                        parseInt(current_page) + 1 == total_pages
+                        parseInt(currentPageNumber) == total_pages ||
+                        parseInt(currentPageNumber) + 1 == total_pages
                             ? "d-none"
                             : ""
                     }`}
                 >
                     <span className="page-link">
-                        {parseInt(current_page) + 2}
+                        {parseInt(currentPageNumber) + 2}
                     </span>
                 </li>
 
@@ -114,9 +122,9 @@ function Pagination({ total_pages, current_page, per_page }) {
                 <li
                     onClick={() => emit("pageChange", parseInt(total_pages))}
                     className={`page-item us-none cursor-pointer ${
-                        current_page == total_pages ||
-                        parseInt(current_page) + 1 == total_pages ||
-                        parseInt(current_page) + 2 == total_pages
+                        currentPageNumber == total_pages ||
+                        parseInt(currentPageNumber) + 1 == total_pages ||
+                        parseInt(currentPageNumber) + 2 == total_pages
                             ? "d-none"
                             : ""
                     }`}
@@ -126,9 +134,9 @@ function Pagination({ total_pages, current_page, per_page }) {
 
                 {/* next */}
                 <li
-                    onClick={() => emit("pageChange", parseInt(current_page) + 1)}
+                    onClick={() => emit("pageChange", parseInt(currentPageNumber) + 1)}
                     className={`page-item us-none cursor-pointer ${
-                        current_page == total_pages ? "d-none" : ""
+                        currentPageNumber == total_pages ? "d-none" : ""
                     }`}
                 >
                     <span className="page-link"> next </span>

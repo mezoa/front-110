@@ -15,3 +15,5 @@ function BankCard({ color, background, width, height }) {
         </svg>
     );
 }
+
+export default BankCard;

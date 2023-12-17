@@ -129,12 +129,12 @@ const IncomeCategories = () => {
                     <thead className="thead-dark">
                         <tr>
                             <th>
-                                <input
-                                    type="checkbox"
-                                    className="form-check-input"
-                                    onClick={selectAll}
-                                    checked={allSelected}
-                                />
+                            <input
+                                type="checkbox"
+                                className="form-check-input"
+                                onClick={selectAll}
+                                defaultChecked={allSelected}
+                            />
                             </th>
                             <th>Name</th>
                             <th className="table-action-col">Action</th>

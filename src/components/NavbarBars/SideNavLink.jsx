@@ -1,6 +1,18 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useSidebar } from "../stores/sidebar";
+import Dashboard from '../../assets/icons/dashboard';
+import Wallet from '../../assets/icons/wallet';
+import Bankcard from '../../assets/icons/bankcard';
+import Customer from '../../assets/icons/customer';
+
+const iconComponents = {
+  dashboard: Dashboard,
+  wallet: Wallet,
+  bankcard: Bankcard,
+  customer: Customer,
+  // Add other icons if needed
+};
 
 const SideNavLink = ({ link_details }) => {
     const sidebarStore = useSidebar();
@@ -8,9 +20,11 @@ const SideNavLink = ({ link_details }) => {
     const [show_sublinks, setShowSublinks] = useState(false);
     const [sublinks, setSublinks] = useState([]);
 
+    const Icon = link_details.icon_name ? iconComponents[link_details.icon_name.toLowerCase()] : null;
+
     const handleNavlinkClick = () => {
         if (window.innerWidth <= 767) {
-            useSidebar().toggle();
+          sidebarStore.toggle();
         }
     };
 
@@ -20,7 +34,6 @@ const SideNavLink = ({ link_details }) => {
 
     return (
         <div>
-            {/* For Links Only */}
             {!link_details.sub_links && (
                 <li
                     className={`sidebar-item ${
@@ -32,13 +45,12 @@ const SideNavLink = ({ link_details }) => {
                         className="sidebar-link"
                         to={link_details.link}
                     >
-                        <Icon />
+                        {Icon && <Icon />}
                         <span>{link_details.label}</span>
                     </Link>
                 </li>
             )}
 
-            {/* For Links with SubLinks */}
             {link_details.sub_links && (
                 <li
                     className={`sidebar-item has-sub ${
@@ -50,7 +62,7 @@ const SideNavLink = ({ link_details }) => {
                         className="sidebar-link"
                         onClick={() => setShowSublinks(!show_sublinks)}
                     >
-                        <Icon />
+                        {Icon && <Icon />}
                         <span>{link_details.label}</span>
                     </span>
                     <ul className={`submenu ${show_sublinks ? "active" : ""}`}>

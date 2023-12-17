@@ -131,7 +131,7 @@ const ExpenseCategories = () => {
                                 <input
                                     type="checkbox"
                                     className="form-check-input"
-                                    onClick={select_all}
+                                    onChange={select_all}
                                     checked={all_selectd}
                                 />
                             </th>

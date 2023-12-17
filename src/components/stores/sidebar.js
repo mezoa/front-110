@@ -1,23 +1,32 @@
-import { defineStore } from 'redox';
+import { createStore } from "redux";
 
-export const useSidebar = defineStore('sidebar', {
-    state: () => ({
-        isOpen: false,
-        activeItem: null,
-    }),
+const initialState = {
+    open: true,
+};
 
-    getters: {
-        getSidebarStatus: (state) => state.isOpen,
-    },
+const sidebarReducer = (state = initialState, action) => {
+    switch (action.type) {
+        case "TOGGLE_SIDEBAR":
+            return {
+                ...state,
+                open: !state.open,
+            };
+        default:
+            return state;
+    }
+};
 
-    actions: {
-        toggleSidebar() {
-            this.isOpen = !this.isOpen;
-        },
-        setActiveItem(item) {
-            this.activeItem = item;
-        },
-    },
-});
+export const toggleSidebar = () => {
+    return {
+        type: "TOGGLE_SIDEBAR",
+    };
+};
 
-export default useSidebar;
+const store = createStore(sidebarReducer);
+
+export const useSidebar = () => {
+    const state = store.getState();
+    return state.open;
+};
+
+export default store;

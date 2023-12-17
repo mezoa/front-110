@@ -1,51 +1,61 @@
 import React from "react";
-import SideNavLink from "../components/SideNavLink";
+import { useNavigate } from "react-router-dom";
+import SideNavLink from "./SideNavLink";
 import CrossIcon from "../../assets/icons/crossicon";
 import { useSidebar } from "../stores/sidebar";
+//import '../../assets/css/app.css';
+import './Sidebar.css';
+import iptracker from "../../assets/img/iptracker.png";
 
 const Sidebar = () => {
     const sidebarStore = useSidebar();
+    const navigate = useNavigate();
 
     const navlinks = [
         {
             label: "dashboard",
-            link: "/admin",
-            icon_name: "dashboard-svg-icon",
+            link: "/dashboard",
+            icon_name: "dashboard",
         },
         {
             label: "income",
-            link: "/admin/incomes",
-            icon_name: "wallet-svg-icon",
+            link: "/incomes",
+            icon_name: "wallet",
             sub_links: [
                 {
                     label: "income list",
-                    link: "/admin/incomes",
+                    link: "/incomes",
                 },
                 {
                     label: "income categories",
-                    link: "/admin/income-categories",
+                    link: "/income-categories",
                 },
             ],
         },
         {
             label: "expense",
-            link: "/admin/expenses",
-            icon_name: "bank-card-svg-icon",
+            link: "/expenses",
+            icon_name: "bankcard",
             sub_links: [
                 {
                     label: "expense list",
-                    link: "/admin/expenses",
+                    link: "/expenses",
                 },
                 {
                     label: "expense categories",
-                    link: "/admin/expense-categories",
+                    link: "/expense-categories",
                 },
             ],
         },
         {
             label: "site visitors",
-            link: "/admin/visitors",
-            icon_name: "customer-svg-icon",
+            link: "/visitors",
+            icon_name: "customer",
+        },
+        {
+            label: "pages",
+            link: "/pages",
+            icon_name: "pages",
         },
     ];
 
@@ -55,16 +65,17 @@ const Sidebar = () => {
                 <div className="sidebar-header d-flex">
                     <div>
                         <img
-                            src="../assets/img/finnaf-logo.png"
+                            src={iptracker}
                             className="cursor-pointer img-fluid"
-                            onClick={() => this.$router.push({ name: "dashboard" })}
+                            onClick={() => navigate("/admin")}
+                            alt="EXP/IP TRACKER"
                         />
                     </div>
                     <div className="small-screen-menu-icon ms-3">
                         <CrossIcon
                             width="25px"
                             height="25px"
-                            onClick={sidebarStore.toggle}
+                            onClick={() => sidebarStore.open = !sidebarStore.open} // toggle the open state
                         />
                     </div>
                 </div>

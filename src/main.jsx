@@ -1,10 +1,27 @@
-import React from 'react'
-import ReactDOM from 'react-dom/client'
-import App from './App.jsx'
-import './index.css'
+import React from 'react';
+import { createRoot } from 'react-dom/client';
+import { Provider } from 'react-redux';
+import { useExpenseStore } from './components/modules/expense/expenseStore';
+import App from './App';
 
-ReactDOM.createRoot(document.getElementById('root')).render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-)
+let root = null;
+
+function Root() {
+  const store = useExpenseStore();
+
+  return (
+    <Provider store={store}>
+      <App />
+    </Provider>
+  );
+}
+
+const container = document.getElementById('root');
+
+if (container._reactRootContainer) {
+  root = container._reactRootContainer;
+  root.render(<Root />);
+} else {
+  root = createRoot(container);
+  root.render(<Root />);
+}

@@ -1,6 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import './App.css';
+import './assets/css/app.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Home from './components/modules/home/home';
 import Dashboard from './components/modules/Dashboard/dashboard';
@@ -11,14 +11,12 @@ import ExpenseCategories from './components/modules/expense-category/ExpenseCate
 import Visitors from './components/modules/visitors/visitors';
 import Login from './components/auth/Login';
 import Register from './components/auth/Register';  
-import { Provider } from 'react-redux';
-import { useExpenseStore } from './components/modules/expense/expenseStore';
+import Sidebar from './components/NavbarBars/Sidebar'; // Check this import path
 
 function App() {
-  const store = useExpenseStore();
   return (
-    <Provider store={store}>
     <Router>
+      <Sidebar />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/dashboard" element={<Dashboard />} />
@@ -31,7 +29,6 @@ function App() {
         <Route path="/visitors" element={<Visitors />} />
       </Routes>
     </Router>
-    </Provider>
   );
 }
 
