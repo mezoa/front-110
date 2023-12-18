@@ -161,3 +161,9 @@
     background-color: #4154f1;
   }
   
+  .logout-container {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    padding: 10px;
+  }

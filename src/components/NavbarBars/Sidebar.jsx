@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import './Sidebar.css';
 import logoImage from '../../assets/img/iptracker.png';
+import LogoutIcon from "../../assets/icons/logouticon";
 
 const Sidebar = () => {
     const [incomesCollapsed, setIncomesCollapsed] = useState(false);
@@ -86,8 +87,14 @@ const Sidebar = () => {
                             </a>
                         </li>
                     </ul>
+                    <div className="logout-container">
+                        <a href="/">
+                            <LogoutIcon width="25px" height="25px" color="currentColor" />
+                        </a>
+                    </div>
                 </li>
             </ul>
+            
         </div>
     );
 };

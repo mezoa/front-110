@@ -1,15 +1,66 @@
 import React from 'react';
+import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
 import './home.css';
 
 const Home = () => {
   return (
-    <div className="container">
-      <h1 className="title">Home</h1>
-      <p className="description">Welcome to our expense tracker!</p>
-      <p className="description">An expense tracker is a tool that helps you keep track of your personal expenses. It allows you to record and categorize your expenses, set budgets, and analyze your spending habits.</p>
-      <p className="description">Using an expense tracker can be incredibly beneficial for managing your finances. It helps you gain a better understanding of where your money is going, identify areas where you can save, and make informed financial decisions.</p>
-      <p className="description">Our expense tracker offers a creative and user-friendly interface to make tracking your expenses a breeze. Start using it today and take control of your personal finances!</p>
-    </div>
+    <>
+      <motion.div
+        className="homecontainer"
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.3 }}
+      >
+        <div className="wrapper">
+          <div className="component-title">
+            <div>
+              <div className="indicator"></div>
+              <div className="title">HOME</div>
+            </div>
+          </div>
+          {/* Add buttons for login and register redirections */}
+          <div className="auth-buttons">
+            <Link to="/login">
+              <button className="auth-button">Login</button>
+            </Link>
+            <Link to="/register">
+              <button className="auth-button">Register</button>
+            </Link>
+          </div>
+          <div className="home">
+            <motion.div
+              initial={{ opacity: 0, y: 50 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3, delay: 0.1 }}
+            >
+              <p className="description">
+                Welcome to our expense tracker! An expense tracker is a tool that helps you keep track of your personal expenses.
+              </p>
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, y: 50 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3, delay: 0.2 }}
+              className="features"
+            >
+              <div className="feature-card">
+                <span>INCOME TRACKER</span>
+                <span>
+                  Keep a record of your earnings and track your income sources to manage your finances effectively...
+                </span>
+              </div>
+              <div className="feature-card">
+                <span>EXPENSE TRACKER</span>
+                <span>
+                  Monitor your spending habits, categorize expenses, and analyze your expenditures to make informed financial decisions...
+                </span>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </motion.div>
+    </>
   );
 };
 

@@ -62,23 +62,28 @@ svg {
 .min250{min-width: 250px !important;}
 .max250{max-width: 250px !important;}
 
+/*App.jsx*/
 #app {
     position: relative
 }
+
 .app-container {
     display: flex;
-    height: 100vh; /* Full height */
+    height: 100vh;
   }
-  
   .sidebar-container {
-    flex: 0.2; /* 30% of the container width */
-    height: 100%;
-    
+    flex: 2; /* 20% */
   }
   
   .route-container {
-    flex: 0.8; /* 70% of the container width */
-    overflow: auto; /* Add scroll if content overflows */
+    flex: 8; /* 80% */
+  }
+  
+  .center-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
   }
 
 #main {

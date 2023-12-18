@@ -14,7 +14,7 @@ const Register = () => {
           <div onSubmit={handleSubmit} className="card pt-4">
             <div className="card-body">
               <div className="text-center mb-5">
-                <img src="..." className='img-fluid mb-4'/>
+                <img src="./../../assets/icons/usericon.jsx" className='img-fluid mb-4'/>
                 <h3>Register</h3>
                 <p>Please fill the form to Register</p>
               </div>
