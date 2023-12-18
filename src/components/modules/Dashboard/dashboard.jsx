@@ -6,6 +6,7 @@ import Wallet from '../../../assets/icons/wallet';
 import Coin from '../../../assets/icons/coin';
 import TwentyFour from '../../../assets/icons/TwentyFour';
 import HandLoveIcon from '../../../assets/icons/handloveicon';
+import Cookies from 'js-cookie';
 
 const Dashboard = () => {
     const [loading, setLoading] = useState(false);
@@ -87,8 +88,13 @@ const Dashboard = () => {
 
     const fetchData = async () => {
         setLoading(true);
+        const accessToken = Cookies.get('accessToken');
         try {
-            const response = await axios.get('/api/dashboard-reports');
+            const response = await axios.get('http://expenseapp.test/api/dashboard', {
+                headers: {
+                  Authorization: `Bearer ${accessToken}`, 
+                },
+              });
             const data = response.data;
 
             setReportData(data);
@@ -173,7 +179,7 @@ const Dashboard = () => {
                                     <TwentyFour color="white" width={28} height={28} />
                                 </div>
                                 <div className="my-2">
-                                    <span className="h3">{reportData.today_incomes}</span>
+                                    <span className="h3">{reportData.todays_income}</span>
                                     <br />
                                     <span className="text-muted fs-6">Today Incomes</span>
                                 </div>
@@ -186,7 +192,7 @@ const Dashboard = () => {
                                     <Wallet color="white" width={28} height={28} />
                                 </div>
                                 <div className="my-2">
-                                    <span className="h3">{reportData.total_incomes}</span>
+                                    <span className="h3">{reportData.total_income}</span>
                                     <br />
                                     <span>Total Incomes</span>
                                 </div>

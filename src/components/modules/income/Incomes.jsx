@@ -20,12 +20,12 @@ const Incomes = () => {
     const [showAddIncome, setShowAddIncome] = useState(false);
     const [showEditIncome, setShowEditIncome] = useState(false);
     const [showViewIncome, setShowViewIncome] = useState(false);
+    const [incomeCategories, setIncomeCategories] = useState([]);
 
     let incomeStore = useIncomeStore();
     const confirmStore = useConfirmStore();
     const incomes = incomeStore.incomes;
     const incomeCategoryStore = useIncomeCategoryStore();
-    let incomeCategories = [];
 
     const q_title = "";
     let selected_incomes = [];
@@ -88,17 +88,21 @@ const Incomes = () => {
     useEffect(() => {
         fetchData(1);
         incomeCategoryStore.fetchCatList().then((response) => {
-            incomeCategories = response;
+            const mappedResponse = response.map(category => ({
+                value: category.category_id,
+                label: category.name
+            }));
+            setIncomeCategories(mappedResponse);
         });
     }, []);
-
+    console.log("incomecategories", incomeCategories)
     return (
         <div>
             <div className="page-top-box mb-2 d-flex flex-wrap">
                 <h3 className="h3">Income List</h3>
                 <div className="page-heading-actions ms-auto">
                     {selected_incomes.length > 0 && <BulkDeleteButton onClick={() => deleteData(selected_incomes)} />}
-                    <AddNewButton onClick={() => setShowAddIncome(true)} />
+                    <AddNewButton onClick={() => { console.log('Button clicked'); setShowAddIncome(true); }}  />
                     <FilterButton onClick={() => setFilterTab(!filterTab)} />
                 </div>
             </div>

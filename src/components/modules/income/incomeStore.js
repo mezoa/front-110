@@ -1,11 +1,13 @@
-import axios from "axios";
+import axiosInstance from '../../../hooks/axiosinstance';
 import { useSelector, useDispatch } from "react-redux";
 import { addNotification } from "../../shared/notification/notification-container";
 import formatValidationErrors from "../../utils/format-validation-error";
 
+
 export const useIncomeStore = () => {
   const dispatch = useDispatch();
   const state = useSelector((state) => state); // Get the current state from the Redux store
+
 
   const initialState = {
         current_page: 1,
@@ -33,8 +35,8 @@ export const useIncomeStore = () => {
         current_income_item: {
             id: "",
             title: "",
-            amount: "",
-            date: "",
+            amount: 0,
+            entry_date: "",
             description: "",
             categories: [],
         },
@@ -47,7 +49,7 @@ export const useIncomeStore = () => {
     const fetchIncomes = async (page, limit, q_title = "") => {
         try {
           const incomes = state.incomes || {};
-          const response = await axios.get(
+          const response = await axiosInstance.get(
             `/api/incomes?page=${page}&limit=${limit}&title=${q_title}&category=${incomes.q_category}&start_amount=${incomes.q_start_amount}&end_amount=${incomes.q_end_amount}&start_date=${incomes.q_start_date}&end_date=${incomes.q_end_date}&sort_column=${incomes.q_sort_column}&sort_order=${incomes.q_sort_order}`
           );
           dispatch({ type: "SET_INCOMES", payload: response.data.data });
@@ -60,7 +62,7 @@ export const useIncomeStore = () => {
 
     const fetchIncome = async (id) => {
         try {
-            const response = await axios.get(`/api/incomes/${id}`);
+            const response = await axiosInstance.get(`/api/incomes/${id}`);
             dispatch({ type: "SET_CURRENT_INCOME_ITEM", payload: response.data.data });
             dispatch({ type: "SET_CURRENT_INCOME_ITEM_CATEGORIES_DETAILS", payload: response.data.data.categories });
             dispatch({ type: "SET_CURRENT_INCOME_ITEM_CATEGORIES", payload: response.data.data.categories.map((item) => item.value) });
@@ -71,14 +73,22 @@ export const useIncomeStore = () => {
     };
 
     const addIncome = async (data) => {
+        console.log(data)
         try {
-            const response = await axios.post(`/api/incomes`, data);
-            resetCurrentIncomeData();
-            dispatch(addNotification("Income Added Successfully", "success", 2000));
-            return response;
+            console.log(data)
+            const response = await axiosInstance.post('/api/incomes', data);
+    
+            if (response && response.data) {
+                resetCurrentIncomeData();
+                dispatch(addNotification("Income Added Successfully", "success", 2000));
+                return response;
+            } else {
+                console.error('API response is undefined or data is not available');
+            }
         } catch (error) {
             dispatch(addNotification("Error Occurred", "error", 2000));
-            if (error.response.status == 422) {
+            console.log("error", error.response && error.response.data ? error.response.data.errors : error)
+            if (error.response && error.response.status == 422) {
                 dispatch({ type: "SET_ADD_INCOME_ERRORS", payload: formatValidationErrors(error.response.data.errors) });
             }
             throw error;
@@ -87,7 +97,7 @@ export const useIncomeStore = () => {
 
     const editIncome = async (data) => {
         try {
-            const response = await axios.put(`/api/incomes/${state.edit_income_id}`, data);
+            const response = await axiosInstance.put(`/api/incomes/${state.edit_income_id}`, data);
             resetCurrentIncomeData();
             dispatch(addNotification("income record updated successfully", "success"));
             return response;
@@ -103,7 +113,7 @@ export const useIncomeStore = () => {
 
     const deleteIncome = async (id) => {
         try {
-            const response = await axios.delete(`/api/incomes/${id}`);
+            const response = await axiosInstance.delete(`/api/incomes/${id}`);
             if (state.incomes.length == 1 || (Array.isArray(id) && id.length == state.incomes.length)) {
                 dispatch({ type: "DECREMENT_CURRENT_PAGE" });
             }

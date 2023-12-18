@@ -1,20 +1,24 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import Cookies from 'js-cookie' // You can use js-cookie or any other library to read cookies
 
-const useApi = () => {
+const useApi = (deps) => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   useEffect(() => {
     const api = axios.create({
-      baseURL: 'http://127.0.0.1:8000/api', // Replace with your Laravel backend URL
+      baseURL: 'http://expenseapp.test/api',
+      headers: {
+        Authorization: `Bearer ${Cookies.get('accessToken')}`, // Replace 'token' with the name of your cookie
+      },
     });
 
     const fetchData = async () => {
       setLoading(true);
       try {
-        const response = await api.get('/endpoint'); // Replace with your API endpoint
+        const response = await api.get('/user');
         setData(response.data);
         setError(null);
       } catch (error) {
@@ -25,7 +29,7 @@ const useApi = () => {
     };
 
     fetchData();
-  }, []);
+  }, deps);
 
   return { data, loading, error };
 };
