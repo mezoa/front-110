@@ -83,6 +83,9 @@ const IncomeCategories = () => {
         try {
             incomeCategoryStore.fetchIncomeCats(page, limit, q_name).then((response) => {
                 setLoading(false);
+
+                setIncomeCategories(response.data);
+
             });
         } catch (error) {
             // console.log(error);

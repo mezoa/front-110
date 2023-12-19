@@ -14,6 +14,7 @@ import BulkDeleteButton from "../../buttons/BulkDeleteButton";
 import AddExpense from "./AddExpense";
 import EditExpense from "./EditExpense";
 import ViewExpense from "./ViewExpense";
+import { fetchExpenses } from './expenseStore';
 
 
 const Expense = () => {
@@ -45,7 +46,6 @@ const Expense = () => {
 
     const fetchCategories = useCallback(async () => {
         const response = await expenseCategoryStore.fetchCatList();
-        console.log('fetchCategories', response);
         return response.data;
     }, [dispatch]);
     
@@ -89,23 +89,22 @@ const Expense = () => {
 
     const fetchData = async (page = expenseStore.current_page, limit = expenseStore.limit, q_title = expenseStore.q_title) => {
         setLoading(true);
-
-        setAllSelected(false);
-        setSelectedExpenses([]);
-
         try {
-            expenseStore.fetchExpenses(page, limit, q_title).then((response) => {
-                setLoading(false);
-            });
+            const response = dispatch(fetchExpenses(page, limit, q_title));
+            setLoading(false);
+            setExpenses(response);
         } catch (error) {
-            // console.log(error);
+            console.log(error);
             setLoading(false);
         }
     };
+    
+    useEffect(() => {
+        fetchData(1);
+        // other code...
+    }, []);
 
-    
-console.log(expenseCategories)
-    
+    console.log(expenses);
     return (
         <div>
             <div className="page-top-box mb-2 d-flex flex-wrap">

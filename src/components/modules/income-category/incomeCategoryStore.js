@@ -59,9 +59,12 @@ export const useIncomeCategoryStore = () => {
 
     const fetchIncomeCats = async (page, limit, q_name = "") => {
         try {
-            const response = await api.get(
-                `/api/income-categories?page=${page}&limit=${limit}&name=${q_name}`
-            );
+            let url = `/api/income-categories`;
+            if (page) url += `?page=${page}`;
+            if (limit) url += `&limit=${limit}`;
+            if (q_name) url += `&name=${q_name}`;
+    
+            const response = await api.get(url);
             dispatch({ type: "FETCH_INCOME_CATS", payload: response.data.data });
             if (response.data.meta) {
                 dispatch({ type: "SET_TOTAL_PAGES", payload: response.data.meta.last_page });

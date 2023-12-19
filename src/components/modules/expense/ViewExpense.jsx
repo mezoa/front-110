@@ -3,10 +3,12 @@ import CrossIcon from "../../../assets/icons/crossicon";
 import Loader from "../../shared/loader/Loader";
 import { useExpenseStore } from "./expenseStore";
 
-const ViewExpense = ({ expense_id, close, refreshData }) => {
+const ViewExpense = ({ expense_id, onClose }) => {
     const [loading, setLoading] = useState(false);
     const expenseStore = useExpenseStore();
     const [expense_data, setExpenseData] = useState(expenseStore.current_expense_item);
+
+    console.log(expense_data);
 
     const fetchData = async (id) => {
         setLoading(true);
@@ -16,7 +18,7 @@ const ViewExpense = ({ expense_id, close, refreshData }) => {
 
     const closeViewExpenseModal = () => {
         expenseStore.resetCurrentExpenseData();
-        close();
+        onClose();
     };
 
     useEffect(() => {
