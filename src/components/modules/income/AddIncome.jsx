@@ -3,13 +3,13 @@ import CrossIcon from "../../../assets/icons/crossicon";
 import { useIncomeStore } from "./incomeStore";
 import Select from "react-select";
 
-const AddIncome = ({ categories }) => {
+const AddIncome = ({ categories, refreshData, close }) => {
     const [incomeData, setIncomeData] = useState({
         title: "",
-        categories: [],
-        date: "",
-        amount: "",
-        description: ""
+        amount: 0, // initialize as a number
+        entry_date: "",
+        description: "",
+        categories: "",
     });
 
     const incomeStore = useIncomeStore();
@@ -19,18 +19,27 @@ const AddIncome = ({ categories }) => {
     }, []);
 
     const submitData = async () => {
+        console.log('submitData start'); // add this line
+    
         try {
-            await incomeStore.addIncome(JSON.parse(JSON.stringify(incomeData)));
-            emit("refreshData");
-            emit("close");
+            const dataToSend = {
+                ...incomeData,
+                category_id: incomeData.categories.value
+            };
+            delete dataToSend.categories;
+    
+            console.log('before addIncome', dataToSend); // add this line
+            await incomeStore.addIncome(JSON.parse(JSON.stringify(dataToSend)));
+            refreshData();
+            close();
         } catch (error) {
-            console.log("error occurred");
+            console.log("error occurred", error); // log the error
         }
     };
 
     const closeAddIncomeModal = () => {
         incomeStore.resetCurrentIncomeData();
-        emit("close");
+        close();
     };
 
     return (
@@ -39,8 +48,8 @@ const AddIncome = ({ categories }) => {
                 <div className="modal-content">
                     <div className="modal-header">
                         <h5 className="modal-title">Add New Income</h5>
-                        <button type="button" className="close">
-                            <CrossIcon onClick={closeAddIncomeModal} />
+                        <button type="button" className="close" onClick={closeAddIncomeModal}>
+                            <CrossIcon  />
                         </button>
                     </div>
 
@@ -49,7 +58,7 @@ const AddIncome = ({ categories }) => {
                             <div className="form-item">
                                 <label className="my-2">Income Short Title</label>
                                 <p className="text-danger">
-                                    {incomeStore.add_income_errors.title}
+                                {incomeStore.add_income_errors && incomeStore.add_income_errors.title}
                                 </p>
                                 <input
                                     type="text"
@@ -63,12 +72,11 @@ const AddIncome = ({ categories }) => {
                             <div className="form-item">
                                 <label className="my-2">Income Category</label>
                                 <p className="text-danger">
-                                    {incomeStore.add_income_errors.categories}
+                                    {incomeStore.add_income_errors && incomeStore.add_income_errors.categories}
                                 </p>
 
                                 <Select
                                     isSearchable={true}
-                                    isMulti={true}
                                     hideSelectedOptions={false}
                                     value={incomeData.categories}
                                     options={categories}
@@ -80,29 +88,30 @@ const AddIncome = ({ categories }) => {
                             <div className="form-item">
                                 <label className="my-2">Income Date</label>
                                 <p className="text-danger">
-                                    {incomeStore.add_income_errors.date}
+                                    {incomeStore.add_income_errors && incomeStore.add_income_errors.entry_date}
                                 </p>
                                 <input
                                     type="date"
                                     className="form-control"
-                                    value={incomeData.date}
+                                    value={incomeData.entry_date}
                                     onChange={(e) =>
-                                        setIncomeData({ ...incomeData, date: e.target.value })
+                                        setIncomeData({ ...incomeData, entry_date: e.target.value })
                                     }
                                 />
                             </div>
                             <div className="form-item">
                                 <label className="my-2">Income Amount</label>
                                 <p className="text-danger">
-                                    {incomeStore.add_income_errors.amount}
+                                    {incomeStore.add_income_errors && incomeStore.add_income_errors.amount}
                                 </p>
                                 <input
                                     type="number"
                                     className="form-control"
                                     value={incomeData.amount}
-                                    onChange={(e) =>
-                                        setIncomeData({ ...incomeData, amount: e.target.value })
-                                    }
+                                    onChange={(e) => {
+                                        const amount = parseFloat(e.target.value);
+                                        setIncomeData({ ...incomeData, amount: isNaN(amount) ? 0 : amount });
+                                    }}
                                 />
                             </div>
                             <div className="form-item">

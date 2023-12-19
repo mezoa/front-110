@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import CrossIcon from "../../../assets/icons/crossicon";
 import { useIncomeCategoryStore } from "./incomeCategoryStore";
 
-const AddIncomeCat = () => {
+const AddIncomeCat = ({ onRefreshData, onClose }) => {
     const [incomeCategoryData, setIncomeCategoryData] = useState({});
     const incomeCategoryStore = useIncomeCategoryStore();
 
@@ -15,8 +15,8 @@ const AddIncomeCat = () => {
             await incomeCategoryStore.addIncomeCat(
                 JSON.parse(JSON.stringify(incomeCategoryData))
             );
-            emit("refreshData");
-            emit("close");
+            onRefreshData();
+            onclose();
         } catch (error) {
             console.log("error occurred");
         }
@@ -24,7 +24,7 @@ const AddIncomeCat = () => {
 
     const closeAddIncomeCatModal = () => {
         incomeCategoryStore.resetCurrentIncomeCatData();
-        emit("close");
+        onClose();
     };
 
     return (
@@ -33,8 +33,8 @@ const AddIncomeCat = () => {
                 <div className="modal-content">
                     <div className="modal-header">
                         <h5 className="modal-title">Add New Income Category</h5>
-                        <button type="button" className="close">
-                            <CrossIcon onClick={closeAddIncomeCatModal} />
+                        <button type="button" className="close" onClick={closeAddIncomeCatModal}>
+                            <CrossIcon  />
                         </button>
                     </div>
 
@@ -43,7 +43,7 @@ const AddIncomeCat = () => {
                             <div className="form-item">
                                 <label className="my-2">Income Category Name</label>
                                 <p className="text-danger">
-                                    {incomeCategoryStore.add_income_category_errors.name}
+                                    { incomeCategoryStore.add_income_category_errors && incomeCategoryStore.add_income_category_errors.name}
                                 </p>
                                 <input
                                     type="text"
