@@ -7,6 +7,7 @@ import Cookies from 'js-cookie';
 
 export const useIncomeCategoryStore = () => {
     const dispatch = useDispatch();
+    
 
     const initialState = {
         current_page: 1,

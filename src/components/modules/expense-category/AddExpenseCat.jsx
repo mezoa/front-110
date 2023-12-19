@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import CrossIcon from "../../../assets/icons/crossicon";
 import { useExpenseCategoryStore } from "./expenseCategoryStore";
 
-const AddExpenseCat = () => {
+const AddExpenseCat = ({onClose, onRefreshData}) => {
     const [expenseCategoryData, setExpenseCategoryData] = useState({});
     const expenseCategoryStore = useExpenseCategoryStore();
 
@@ -15,16 +15,16 @@ const AddExpenseCat = () => {
             await expenseCategoryStore.addExpenseCat(
                 JSON.parse(JSON.stringify(expenseCategoryData))
             );
-            emit("refreshData");
-            emit("close");
+            onRefreshData();
+            onClose();
         } catch (error) {
-            console.log("error occurred");
+            console.log("error occurred, error: ", error); // log the error
         }
     };
 
     const closeAddExpenseCatModal = () => {
         expenseCategoryStore.resetCurrentExpenseCatData();
-        emit("close");
+        onClose();
     };
 
     return (
@@ -33,8 +33,8 @@ const AddExpenseCat = () => {
                 <div className="modal-content">
                     <div className="modal-header">
                         <h5 className="modal-title">Add New Expense Category</h5>
-                        <button type="button" className="close">
-                            <CrossIcon onClick={closeAddExpenseCatModal} />
+                        <button type="button" className="close" onClick={closeAddExpenseCatModal}>
+                            <CrossIcon  />
                         </button>
                     </div>
 

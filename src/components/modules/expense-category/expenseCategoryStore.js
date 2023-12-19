@@ -1,8 +1,8 @@
-import axios from "axios";
 import { useState } from "react";
 import formatValidationErrors from "../../utils/format-validation-error";
-import { useNotificationStore } from "../../shared/notification/notificationstore";
-
+import { NotificationStore } from "../../shared/notification/notificationstore";
+import axiosInstance from "../../../hooks/axiosinstance";
+import {toast} from "react-toastify";
 export function useExpenseCategoryStore() {
     const [current_page, setCurrentPage] = useState(1);
     const [total_pages, setTotalPages] = useState(0);
@@ -29,11 +29,13 @@ export function useExpenseCategoryStore() {
 
     const fetchCatList = () => {
         return new Promise((resolve, reject) => {
-            axios
-                .get(`/api/expense-categories/list`)
+            axiosInstance
+                .get(`/api/expense-categories`)
                 .then((response) => {
+                    console.log(response.data.data.data);
                     resolve(response.data.data);
                 })
+                
                 .catch((errors) => {
                     reject(errors);
                 });
@@ -42,7 +44,7 @@ export function useExpenseCategoryStore() {
 
     const fetchExpenseCats = (page, limit, q_name = "") => {
         return new Promise((resolve, reject) => {
-            axios
+            axiosInstance
                 .get(`/api/expense-categories?page=${page}&limit=${limit}&name=${q_name}`)
                 .then((response) => {
                     setExpenseCategories(response.data.data);
@@ -62,7 +64,7 @@ export function useExpenseCategoryStore() {
 
     const fetchExpenseCat = (id) => {
         return new Promise((resolve, reject) => {
-            axios
+            axiosInstance
                 .get(`/api/expense-categories/${id}`)
                 .then((response) => {
                     setCurrentExpenseCategoryItem(response.data.data);
@@ -76,27 +78,23 @@ export function useExpenseCategoryStore() {
 
     const addExpenseCat = (data) => {
         return new Promise((resolve, reject) => {
-            axios
+            axiosInstance
                 .post(`/api/expense-categories`, data)
                 .then((response) => {
                     resetCurrentExpenseCatData();
-                    const notifcationStore = useNotificationStore();
-                    notifcationStore.pushNotification({
-                        message: "ExpenseCat Added Successfully",
-                        type: "success",
-                        time: 2000,
+                    
+                    toast.success("ExpenseCat Added Successfully", {
+                        position: toast.POSITION.TOP_RIGHT,
+                        autoClose: 2000,
                     });
-
+    
                     resolve();
                 })
                 .catch((error) => {
-                    const notifcationStore = useNotificationStore();
-                    notifcationStore.pushNotification({
-                        message: "Error Occurred",
-                        type: "error",
-                        time: 2000,
+                    toast.error("Error Occurred when adding", {
+                        position: toast.POSITION.TOP_RIGHT,
                     });
-
+    
                     if (error.response.status == 422) {
                         setAddExpenseCategoryErrors(formatValidationErrors(error.response.data.errors));
                     }
@@ -107,24 +105,30 @@ export function useExpenseCategoryStore() {
 
     const editExpenseCat = (data) => {
         return new Promise((resolve, reject) => {
-            axios
+            axiosInstance
                 .put(`/api/expense-categories/${edit_expense_category_id}`, data)
                 .then((response) => {
                     resetCurrentExpenseCatData();
-                    const notifcationStore = useNotificationStore();
-                    notifcationStore.pushNotification({
-                        message: "expense category updated successfully",
-                        type: "success",
+    
+                    NotificationStore.dispatch({
+                        type: 'PUSH_NOTIFICATION',
+                        payload: {
+                            message: "expense category updated successfully",
+                            type: "success",
+                        },
                     });
+    
                     resolve(response);
                 })
                 .catch((errors) => {
-                    const notifcationStore = useNotificationStore();
-                    notifcationStore.pushNotification({
-                        message: "Error Occurred",
-                        type: "error",
+                    NotificationStore.dispatch({
+                        type: 'PUSH_NOTIFICATION',
+                        payload: {
+                            message: "Error Occurred",
+                            type: "error",
+                        },
                     });
-
+    
                     if (errors.response.status == 422) {
                         setEditExpenseCategoryErrors(formatValidationErrors(errors.response.data.errors));
                     }
@@ -135,7 +139,7 @@ export function useExpenseCategoryStore() {
 
     const deleteExpenseCat = (id) => {
         return new Promise((resolve, reject) => {
-            axios
+            axiosInstance
                 .delete(`/api/expense-categories/${id}`)
                 .then((response) => {
                     if (
@@ -144,15 +148,18 @@ export function useExpenseCategoryStore() {
                     ) {
                         setCurrentPage(current_page == 1 ? 1 : current_page - 1);
                     }
-
+    
                     resetCurrentExpenseCatData();
-                    const notifcationStore = useNotificationStore();
-                    notifcationStore.pushNotification({
-                        message: "expense category deleted successfully",
-                        type: "success",
-                        time: 2000,
+    
+                    NotificationStore.dispatch({
+                        type: 'PUSH_NOTIFICATION',
+                        payload: {
+                            message: "expense category deleted successfully",
+                            type: "success",
+                            time: 2000,
+                        },
                     });
-
+    
                     resolve(response);
                 })
                 .catch((errors) => {
@@ -160,12 +167,14 @@ export function useExpenseCategoryStore() {
                         errors.response.data.error_type &&
                         errors.response.data.error_type == "HAS_CHILD_ERROR"
                     ) {
-                        const notifcationStore = useNotificationStore();
-                        notifcationStore.pushNotification({
-                            message:
-                                "Category is associated with non zero expense records. Delete that expenses first.",
-                            type: "error",
-                            time: 5000,
+                        NotificationStore.dispatch({
+                            type: 'PUSH_NOTIFICATION',
+                            payload: {
+                                message:
+                                    "Category is associated with non zero expense records. Delete that expenses first.",
+                                type: "error",
+                                time: 5000,
+                            },
                         });
                     }
                     reject(errors);

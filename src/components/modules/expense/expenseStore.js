@@ -3,6 +3,7 @@ import formatValidationErrors from "../../utils/format-validation-error"
 import { configureStore } from "@reduxjs/toolkit";
 import { useDispatch } from "react-redux";
 import { useMemo } from "react";
+import axiosInstance from "../../../hooks/axiosinstance";
 
 
 export const useExpenseStore = () => configureStore({
@@ -36,7 +37,7 @@ export const useExpenseStore = () => configureStore({
                 amount: "",
                 date: "",
                 description: "",
-                categories: [],
+                categories: "",
             },
         }, action) => {
             switch (action.type) {
@@ -46,10 +47,10 @@ export const useExpenseStore = () => configureStore({
                         current_expense_item: {
                             id: "",
                             title: "",
-                            amount: "",
+                            amount: 0,
                             date: "",
                             description: "",
-                            categories: [],
+                            categories: "",
                         },
                     };
                 case "FETCH_EXPENSES":
@@ -133,15 +134,102 @@ export const useNotificationStore = configureStore({
     },
 });
 
-export function useExpenseActions() {
-    const dispatch = useDispatch();
 
+async function fetchExpenses(page, limit, q_title = "") {
+    return async (dispatch, getState) => {
+      try {
+        const state = getState();
+        const expenses = state.expense.expenses || {};
+        const response = await axiosInstance.get(
+          `/expenses?page=${page}&limit=${limit}&title=${q_title}&category=${expenses.q_category}&start_amount=${expenses.q_start_amount}&end_amount=${expenses.q_end_amount}&start_date=${expenses.q_start_date}&end_date=${expenses.q_end_date}&sort_column=${expenses.q_sort_column}&sort_order=${expenses.q_sort_order}`
+        );
+        dispatch({ type: "FETCH_EXPENSES", payload: response.data.data });
+        return response.data.data;
+      } catch (error) {
+        throw error;
+      }
+    };
+  }
+  
+  async function fetchExpense(id) {
+    return async (dispatch) => {
+      try {
+        const response = await axiosInstance.get(`/expenses/${id}`);
+        dispatch({ type: "FETCH_EXPENSE", payload: response.data.data });
+        dispatch({ type: "SET_CATEGORIES_DETAILS", payload: response.data.data.categories });
+        dispatch({ type: "SET_CATEGORIES", payload: response.data.data.categories.map((item) => item.value) });
+        return response.data.data;
+      } catch (error) {
+        throw error;
+      }
+    };
+  }
+  
+  async function addExpense(data) {
+    return async (dispatch) => {
+      try {
+        const response = await axiosInstance.post('/expenses', data);
+        if (response && response.data) {
+          dispatch({ type: "RESET_CURRENT_EXPENSE_DATA" });
+          dispatch(addNotification("Expense Added Successfully", "success", 2000));
+          return response;
+        } else {
+          console.error('API response is undefined or data is not available');
+        }
+      } catch (error) {
+        dispatch(addNotification("Error Occurred", "error", 2000));
+        if (error.response && error.response.status == 422) {
+          dispatch({ type: "SET_ADD_EXPENSE_ERRORS", payload: formatValidationErrors(error.response.data.errors) });
+        }
+        throw error;
+      }
+    };
+  }
+  
+  async function editExpense(data) {
+    return async (dispatch, getState) => {
+      try {
+        const state = getState();
+        const response = await axiosInstance.put(`/expenses/${state.expense.edit_expense_id}`, data);
+        dispatch({ type: "RESET_CURRENT_EXPENSE_DATA" });
+        dispatch(addNotification("Expense record updated successfully", "success"));
+        return response;
+      } catch (errors) {
+        dispatch(addNotification("Error Occurred", "error"));
+        if (errors.response.status == 422) {
+          dispatch({ type: "SET_EDIT_EXPENSE_ERRORS", payload: formatValidationErrors(errors.response.data.errors) });
+        }
+        throw errors;
+      }
+    };
+  }
+  
+  async function deleteExpense(id) {
+    return async (dispatch, getState) => {
+      try {
+        const state = getState();
+        const response = await axiosInstance.delete(`/expenses/${id}`);
+        if (state.expense.expenses.length == 1 || (Array.isArray(id) && id.length == state.expense.expenses.length)) {
+          dispatch({ type: "DECREMENT_CURRENT_PAGE" });
+        }
+        dispatch({ type: "RESET_CURRENT_EXPENSE_DATA" });
+        dispatch(addNotification("Expense deleted successfully", "success", 2000));
+        return response;
+      } catch (error) {
+        throw error;
+      }
+    };
+  }
+  
+  export function useExpenseActions() {
+    const dispatch = useDispatch();
+  
     return useMemo(() => ({
-        resetCurrentExpenseData: () => dispatch({ type: "RESET_CURRENT_EXPENSE_DATA" }),
-        fetchExpenses: (page, limit, q_title = "") => dispatch(fetchExpenses(page, limit, q_title)),
-        fetchExpense: (id) => dispatch(fetchExpense(id)),
-        addExpense: (data) => dispatch(addExpense(data)),
-        editExpense: (data) => dispatch(editExpense(data)),
-        deleteExpense: (id) => dispatch(deleteExpense(id)),
+      resetCurrentExpenseData: () => dispatch({ type: "RESET_CURRENT_EXPENSE_DATA" }),
+      fetchExpenses: (page, limit, q_title = "") => dispatch(fetchExpenses(page, limit, q_title)),
+      fetchExpense: (id) => dispatch(fetchExpense(id)),
+      addExpense: (data) => dispatch(addExpense(data)),
+      editExpense: (data) => dispatch(editExpense(data)),
+      deleteExpense: (id) => dispatch(deleteExpense(id)),
     }), [dispatch]);
-}
+  }

@@ -1,4 +1,5 @@
 import React from 'react';
+import 'react-toastify/dist/ReactToastify.css';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import './assets/css/app.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -13,10 +14,12 @@ import Login from './components/auth/login';
 import Register from './components/auth/Register';  
 import Sidebar from './components/NavbarBars/Sidebar';
 import AuthProvider from './components/authprovider/AuthProvider';
+import {ToastContainer} from 'react-toastify';
 
 function App() {
   return (
     <AuthProvider>
+      <ToastContainer />
     <Router>
       <AppContent />
     </Router>
