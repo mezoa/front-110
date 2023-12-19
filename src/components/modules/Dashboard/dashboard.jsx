@@ -7,6 +7,7 @@ import Coin from '../../../assets/icons/coin';
 import TwentyFour from '../../../assets/icons/TwentyFour';
 import HandLoveIcon from '../../../assets/icons/handloveicon';
 import Cookies from 'js-cookie';
+import { api } from '../../../hooks/axiosinstance';
 
 const Dashboard = () => {
     const [loading, setLoading] = useState(false);
@@ -90,11 +91,7 @@ const Dashboard = () => {
         setLoading(true);
         const accessToken = Cookies.get('accessToken');
         try {
-            const response = await axios.get('http://expenseapp.test/api/dashboard', {
-                headers: {
-                  Authorization: `Bearer ${accessToken}`, 
-                },
-              });
+            const response = await api.get('/api/dashboard');
             const data = response.data;
 
             setReportData(data);

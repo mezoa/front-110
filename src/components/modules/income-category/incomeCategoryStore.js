@@ -1,4 +1,4 @@
-import axiosInstance from '../../../hooks/axiosinstance';
+import {api} from '../../../hooks/axiosinstance';
 import { createStore, applyMiddleware } from 'redux';
 import formatValidationErrors from "../../utils/format-validation-error";
 import { useDispatch } from "react-redux";
@@ -7,6 +7,7 @@ import Cookies from 'js-cookie';
 
 export const useIncomeCategoryStore = () => {
     const dispatch = useDispatch();
+    
 
     const initialState = {
         current_page: 1,
@@ -48,7 +49,7 @@ export const useIncomeCategoryStore = () => {
 
     const fetchCatList = async () => {
         try {
-            const response = await axiosInstance.get(`/api/income-categories`);
+            const response = await api.get(`/api/income-categories`);
             console.log(response.data.data.data)
             return response.data.data.data;
         } catch (errors) {
@@ -58,7 +59,7 @@ export const useIncomeCategoryStore = () => {
 
     const fetchIncomeCats = async (page, limit, q_name = "") => {
         try {
-            const response = await axiosInstance.get(
+            const response = await api.get(
                 `/api/income-categories?page=${page}&limit=${limit}&name=${q_name}`
             );
             dispatch({ type: "FETCH_INCOME_CATS", payload: response.data.data });
@@ -76,7 +77,7 @@ export const useIncomeCategoryStore = () => {
 
     const fetchIncomeCat = async (id) => {
         try {
-            const response = await axiosInstance.get(`/api/income-categories/${id}`);
+            const response = await api.get(`/api/income-categories/${id}`);
             dispatch({ type: "FETCH_INCOME_CAT", payload: response.data.data });
             return response.data.data;
         } catch (errors) {
@@ -86,7 +87,7 @@ export const useIncomeCategoryStore = () => {
 
     const addIncomeCat = async (data) => {
         try {
-            const response = await axiosInstance.post(`/api/income-categories`, data);
+            const response = await api.post(`/api/income-categories`, data);
             resetCurrentIncomeCatData();
             dispatch({ type: "ADD_NOTIFICATION", payload: { message: "IncomeCat Added Successfully", type: "success", time: 2000 } });
             return response;
@@ -101,7 +102,7 @@ export const useIncomeCategoryStore = () => {
 
     const editIncomeCat = async (data) => {
         try {
-            const response = await axiosInstance.put(`/api/income-categories/${store.getState().edit_income_category_id}`, data);
+            const response = await api.put(`/api/income-categories/${store.getState().edit_income_category_id}`, data);
             resetCurrentIncomeCatData();
             dispatch({ type: "ADD_NOTIFICATION", payload: { message: "income category updated successfully", type: "success" } });
             return response;
@@ -117,7 +118,7 @@ export const useIncomeCategoryStore = () => {
 
     const deleteIncomeCat = async (id) => {
         try {
-            const response = await axiosInstance.delete(`/api/income-categories/${id}`);
+            const response = await api.delete(`/api/income-categories/${id}`);
             if (
                 store.getState().income_categories.length == 1 ||
                 (Array.isArray(id) && id.length == store.getState().income_categories.length)

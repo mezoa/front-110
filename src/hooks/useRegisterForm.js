@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import axios from 'axios';
+import { axiosInstance } from './axiosinstance';
 
 const useRegisterForm = (initialState) => {
   const [values, setValues] = useState(initialState);
@@ -15,7 +15,7 @@ const useRegisterForm = (initialState) => {
     e.preventDefault();
 
     try {
-      const response = await axios.post('http://127.0.0.1:8000/api/register', values);
+      const response = await axiosInstance.post('/api/register', values);
       console.log(response.data);
     } catch (error) {
       console.error(error);

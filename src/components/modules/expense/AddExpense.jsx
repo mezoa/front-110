@@ -1,39 +1,52 @@
 import { useState, useEffect } from "react";
 import CrossIcon from "../../../assets/icons/crossicon";
-import { useExpenseStore } from "./expenseStore";
+import { useExpenseStore, useExpenseActions } from "./expenseStore";
+import { useDispatch } from "react-redux";
 import Select from "react-select";
 
-const AddExpense = ({ categories }) => {
+const AddExpense = ({ categories, onClose, refreshData }) => {
     const expenseStore = useExpenseStore();
-    const [expenseData, setExpenseData] = useState(expenseStore.current_expense_item);
+    const dispatch = useDispatch();
+    const [expenseData, setExpenseData] = useState(expenseStore.current_expense_item || {});
+    const { resetCurrentExpenseData, addExpense } = useExpenseActions();
 
     const submitData = async () => {
+        console.log('submitData start');
+    
         try {
-            await expenseStore.addExpense(JSON.parse(JSON.stringify(expenseData)));
-            emit("refreshData");
-            emit("close");
+            const dataToSend = {
+                ...expenseData,
+                category_id: expenseData.categories.value
+            };
+            delete dataToSend.categories;
+    
+            console.log('before addExpense', dataToSend);
+            await dispatch(addExpense(JSON.parse(JSON.stringify(dataToSend))));
+            refreshData();
+            onClose();
         } catch (error) {
-            console.log("error occurred");
+            console.log("error occurred", error);
         }
     };
 
     const closeAddExpenseModal = () => {
-        expenseStore.resetCurrentExpenseData();
-        emit("close");
+        refreshData();
+        onClose();
     };
 
     useEffect(() => {
-        expenseStore.resetCurrentExpenseData();
+        resetCurrentExpenseData();
     }, []);
 
+    console.log('expenseData', expenseData)
     return (
         <div className="modal fade show d-block">
             <div className="modal-dialog modal-dialog-scrollable">
                 <div className="modal-content">
                     <div className="modal-header">
                         <h5 className="modal-title">Add New Expense</h5>
-                        <button type="button" className="close">
-                            <CrossIcon onClick={closeAddExpenseModal} />
+                        <button type="button" className="close" onClick={closeAddExpenseModal}>
+                            <CrossIcon  />
                         </button>
                     </div>
 
@@ -42,7 +55,7 @@ const AddExpense = ({ categories }) => {
                             <div className="form-item">
                                 <label className="my-2">Expense Short Title</label>
                                 <p className="text-danger">
-                                    {expenseStore.add_expense_errors.title}
+                                    {expenseStore.add_expense_errors && expenseStore.add_expense_errors.title}
                                 </p>
                                 <input
                                     type="text"
@@ -59,12 +72,11 @@ const AddExpense = ({ categories }) => {
                             <div className="form-item">
                                 <label className="my-2">Expense Category</label>
                                 <p className="text-danger">
-                                    {expenseStore.add_expense_errors.categories}
+                                    {expenseStore.add_expense_errors && expenseStore.add_expense_errors.categories}
                                 </p>
 
                                 <Select
                                     isSearchable={true}
-                                    isMulti={true}
                                     value={expenseData.categories}
                                     options={categories}
                                     onChange={(value) =>
@@ -78,16 +90,16 @@ const AddExpense = ({ categories }) => {
                             <div className="form-item">
                                 <label className="my-2">Expense Date</label>
                                 <p className="text-danger">
-                                    {expenseStore.add_expense_errors.date}
+                                    {expenseStore.add_expense_errors && expenseStore.add_expense_errors.entry_date}
                                 </p>
                                 <input
                                     type="date"
                                     className="form-control"
-                                    value={expenseData.date}
+                                    value={expenseData.entry_date}
                                     onChange={(e) =>
                                         setExpenseData({
                                             ...expenseData,
-                                            date: e.target.value,
+                                            entry_date: e.target.value,
                                         })
                                     }
                                 />
@@ -95,18 +107,16 @@ const AddExpense = ({ categories }) => {
                             <div className="form-item">
                                 <label className="my-2">Expense Amount</label>
                                 <p className="text-danger">
-                                    {expenseStore.add_expense_errors.amount}
+                                    {expenseStore.add_expense_errors && expenseStore.add_expense_errors.amount}
                                 </p>
                                 <input
                                     type="number"
                                     className="form-control"
                                     value={expenseData.amount}
-                                    onChange={(e) =>
-                                        setExpenseData({
-                                            ...expenseData,
-                                            amount: e.target.value,
-                                        })
-                                    }
+                                    onChange={(e) => {
+                                        const amount = parseFloat(e.target.value);
+                                        setExpenseData({ ...expenseData, amount: isNaN(amount) ? 0 : amount });
+                                    }}
                                 />
                             </div>
                             <div className="form-item">
