@@ -48,7 +48,7 @@ const store = configureStore({
                             id: "",
                             title: "",
                             amount: 0,
-                            date: "",
+                            entry_date: "",
                             description: "",
                             categories: "",
                         },
@@ -138,21 +138,23 @@ export const useNotificationStore = configureStore({
 });
 
 
-async function fetchExpenses(page, limit, q_title = "") {
+export const  fetchExpenses = async (page, limit, q_title = "") => {
     return async (dispatch, getState) => {
       try {
         const state = getState();
         const expenses = state.expense.expenses || {};
         const response = await api.get(
-          `/expenses?page=${page}&limit=${limit}&title=${q_title}&category=${expenses.q_category}&start_amount=${expenses.q_start_amount}&end_amount=${expenses.q_end_amount}&start_date=${expenses.q_start_date}&end_date=${expenses.q_end_date}&sort_column=${expenses.q_sort_column}&sort_order=${expenses.q_sort_order}`
+          `/api/expenses?page=${page}&limit=${limit}&title=${q_title}&category=${expenses.q_category}&start_amount=${expenses.q_start_amount}&end_amount=${expenses.q_end_amount}&start_date=${expenses.q_start_date}&end_date=${expenses.q_end_date}&sort_column=${expenses.q_sort_column}&sort_order=${expenses.q_sort_order}`
         );
-        dispatch({ type: "FETCH_EXPENSES", payload: response.data.data });
+        dispatch({ type: "SET_EXPENSES", payload: response.data.data });
+        console.log(response.data.data)
         return response.data.data;
       } catch (error) {
+        console.error(error);
         throw error;
       }
     };
-  }
+}
   
   async function fetchExpense(id) {
     return async (dispatch) => {
@@ -230,4 +232,4 @@ async function fetchExpenses(page, limit, q_title = "") {
       editExpense: (data) => dispatch(editExpense(data)),
       deleteExpense: (id) => dispatch(deleteExpense(id)),
     }), [dispatch]);
-  }
+}

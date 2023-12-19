@@ -21,10 +21,10 @@ const Incomes = () => {
     const [showEditIncome, setShowEditIncome] = useState(false);
     const [showViewIncome, setShowViewIncome] = useState(false);
     const [incomeCategories, setIncomeCategories] = useState([]);
+    const [incomes, setIncomes] = useState([]);
 
     let incomeStore = useIncomeStore();
     const confirmStore = useConfirmStore();
-    const incomes = incomeStore.incomes;
     const incomeCategoryStore = useIncomeCategoryStore();
 
     const q_title = "";
@@ -78,6 +78,8 @@ const Incomes = () => {
         try {
             incomeStore.fetchIncomes(page, limit, q_title).then((response) => {
                 setLoading(false);
+                console.log("response", response)
+                return setIncomes(response);
             });
         } catch (error) {
             // console.log(error);
@@ -230,7 +232,7 @@ const Incomes = () => {
                         </thead>
                             <tbody>
                                 {(incomes || []).map((income) => (
-                                    <tr key={income.id}>
+                                    <tr key={income.income_id}>
                                         <td>
                                             <input
                                                 type="checkbox"
@@ -238,29 +240,20 @@ const Incomes = () => {
                                                 defaultChecked={false}
                                                 onChange={(e) => {
                                                     if (e.target.checked) {
-                                                        selected_incomes.push(income.id);
+                                                        selected_incomes.push(income.income_id);
                                                     } else {
-                                                        const index = selected_incomes.indexOf(income.id);
+                                                        const index = selected_incomes.indexOf(income.income_id);
                                                         if (index > -1) {
                                                             selected_incomes.splice(index, 1);
                                                         }
                                                     }
                                                 }}
-                                                value={income.id}
+                                                value={income.income_id}
                                             />
                                         </td>
                                         <td className="min150 max150">{income.title}</td>
                                         <td className="min100 max100">{income.amount}</td>
-                                        <td className="min200 max200">
-                                            {(income.categories || []).map((income_cat) => (
-                                                <span
-                                                    key={income_cat.value}
-                                                    className="badge bg-primary m-1 px-2 shadow-sm py-1"
-                                                >
-                                                    {income_cat.label}
-                                                </span>
-                                            ))}
-                                        </td>
+                                        <td className="min200 max200">{income.category}</td>
                                         <td className="min100 max100">{income.date}</td>
                                         <td className="table-action-btns">
                                             <ViewIcon

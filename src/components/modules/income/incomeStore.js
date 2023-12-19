@@ -46,19 +46,26 @@ export const useIncomeStore = () => {
         dispatch({ type: "RESET_CURRENT_INCOME_DATA" });
     };
 
-    const fetchIncomes = async (page, limit, q_title = "") => {
+    const fetchIncomes = async (page = 1, limit = 10, q_title = "") => {
         try {
           const incomes = state.incomes || {};
-          const response = await api.get(
-            `/api/incomes?page=${page}&limit=${limit}&title=${q_title}&category=${incomes.q_category}&start_amount=${incomes.q_start_amount}&end_amount=${incomes.q_end_amount}&start_date=${incomes.q_start_date}&end_date=${incomes.q_end_date}&sort_column=${incomes.q_sort_column}&sort_order=${incomes.q_sort_order}`
-          );
+          let url = `/api/incomes?page=${page}&limit=${limit}&title=${q_title}`;
+          if (incomes.q_category) url += `&category=${incomes.q_category}`;
+          if (incomes.q_start_amount) url += `&start_amount=${incomes.q_start_amount}`;
+          if (incomes.q_end_amount) url += `&end_amount=${incomes.q_end_amount}`;
+          if (incomes.q_start_date) url += `&start_date=${incomes.q_start_date}`;
+          if (incomes.q_end_date) url += `&end_date=${incomes.q_end_date}`;
+          if (incomes.q_sort_column) url += `&sort_column=${incomes.q_sort_column}`;
+          if (incomes.q_sort_order) url += `&sort_order=${incomes.q_sort_order}`;
+    
+          const response = await api.get(url);
+          console.log(response.data.data)
           dispatch({ type: "SET_INCOMES", payload: response.data.data });
-          // ... (rest of your code)
           return response.data.data;
         } catch (error) {
           throw error;
         }
-      };
+    };
 
     const fetchIncome = async (id) => {
         try {
