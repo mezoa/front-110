@@ -7,6 +7,8 @@ const useApi = (deps) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
+  console.log(data);
+
   useEffect(() => {
     const api = axios.create({
       baseURL: 'http://expenseapp.test/api',

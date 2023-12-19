@@ -1,5 +1,4 @@
 import { configureStore } from "@reduxjs/toolkit";
-import { createStore } from 'redux';
 
 const initialState = {
     notifications: [],
@@ -24,6 +23,6 @@ const notificationReducer = (state = initialState, action) => {
     }
 };
 
-const useNotificationStore = createStore(notificationReducer);
+const NotificationStore = configureStore({ reducer: notificationReducer });
 
-export { useNotificationStore };
+export { NotificationStore };

@@ -4,10 +4,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import Notification from "./notification.jsx"
 
 export const addNotification = (message, type, duration) => {
+  console.log('addNotification called with', { message, type, duration });
+
   return (dispatch) => {
     // Dispatch an action to add a notification to the Redux store
     dispatch({
-      type: 'ADD_NOTIFICATION',
+      type: 'PUSH_NOTIFICATION',
       payload: { message, type, duration },
     });
 

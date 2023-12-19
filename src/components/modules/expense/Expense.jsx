@@ -45,13 +45,18 @@ const Expense = () => {
 
     const fetchCategories = useCallback(async () => {
         const response = await expenseCategoryStore.fetchCatList();
-        return response;
+        console.log('fetchCategories', response);
+        return response.data;
     }, [dispatch]);
     
     useEffect(() => {
         fetchData(1);
         fetchCategories().then((response) => {
-            setExpenseCategories(response);
+            const mappedResponse = response.map(category => ({
+                value: category.category_id,
+                label: category.name
+            }));
+            setExpenseCategories(mappedResponse);
         });
     }, []);
 
@@ -99,7 +104,7 @@ const Expense = () => {
     };
 
     
-
+console.log(expenseCategories)
     
     return (
         <div>
