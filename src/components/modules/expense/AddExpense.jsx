@@ -3,12 +3,13 @@ import CrossIcon from "../../../assets/icons/crossicon";
 import { useExpenseStore, useExpenseActions } from "./expenseStore";
 import { useDispatch } from "react-redux";
 import Select from "react-select";
+import { addExpense } from "./expenseStore";
 
 const AddExpense = ({ categories, onClose, refreshData }) => {
     const expenseStore = useExpenseStore();
     const dispatch = useDispatch();
     const [expenseData, setExpenseData] = useState(expenseStore.current_expense_item || {});
-    const { resetCurrentExpenseData, addExpense } = useExpenseActions();
+    const { resetCurrentExpenseData} = useExpenseActions();
 
     const submitData = async () => {
         console.log('submitData start');
@@ -21,7 +22,7 @@ const AddExpense = ({ categories, onClose, refreshData }) => {
             delete dataToSend.categories;
     
             console.log('before addExpense', dataToSend);
-            await dispatch(addExpense(JSON.parse(JSON.stringify(dataToSend))));
+            dispatch(addExpense(JSON.parse(JSON.stringify(dataToSend))));
             refreshData();
             onClose();
         } catch (error) {
