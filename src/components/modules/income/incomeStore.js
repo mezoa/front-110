@@ -1,4 +1,4 @@
-import axiosInstance from '../../../hooks/axiosinstance';
+import {api} from '../../../hooks/axiosinstance';
 import { useSelector, useDispatch } from "react-redux";
 import { addNotification } from "../../shared/notification/notification-container";
 import formatValidationErrors from "../../utils/format-validation-error";
@@ -6,7 +6,7 @@ import formatValidationErrors from "../../utils/format-validation-error";
 
 export const useIncomeStore = () => {
   const dispatch = useDispatch();
-  const state = useSelector((state) => state); // Get the current state from the Redux store
+  const state = useSelector((state) => state); 
 
 
   const initialState = {
@@ -49,7 +49,7 @@ export const useIncomeStore = () => {
     const fetchIncomes = async (page, limit, q_title = "") => {
         try {
           const incomes = state.incomes || {};
-          const response = await axiosInstance.get(
+          const response = await api.get(
             `/api/incomes?page=${page}&limit=${limit}&title=${q_title}&category=${incomes.q_category}&start_amount=${incomes.q_start_amount}&end_amount=${incomes.q_end_amount}&start_date=${incomes.q_start_date}&end_date=${incomes.q_end_date}&sort_column=${incomes.q_sort_column}&sort_order=${incomes.q_sort_order}`
           );
           dispatch({ type: "SET_INCOMES", payload: response.data.data });
@@ -62,7 +62,7 @@ export const useIncomeStore = () => {
 
     const fetchIncome = async (id) => {
         try {
-            const response = await axiosInstance.get(`/api/incomes/${id}`);
+            const response = await api.get(`/api/incomes/${id}`);
             dispatch({ type: "SET_CURRENT_INCOME_ITEM", payload: response.data.data });
             dispatch({ type: "SET_CURRENT_INCOME_ITEM_CATEGORIES_DETAILS", payload: response.data.data.categories });
             dispatch({ type: "SET_CURRENT_INCOME_ITEM_CATEGORIES", payload: response.data.data.categories.map((item) => item.value) });
@@ -76,7 +76,7 @@ export const useIncomeStore = () => {
         console.log(data)
         try {
             console.log(data)
-            const response = await axiosInstance.post('/api/incomes', data);
+            const response = await api.post('/api/incomes', data);
     
             if (response && response.data) {
                 resetCurrentIncomeData();
@@ -97,7 +97,7 @@ export const useIncomeStore = () => {
 
     const editIncome = async (data) => {
         try {
-            const response = await axiosInstance.put(`/api/incomes/${state.edit_income_id}`, data);
+            const response = await api.put(`/api/incomes/${state.edit_income_id}`, data);
             resetCurrentIncomeData();
             dispatch(addNotification("income record updated successfully", "success"));
             return response;
@@ -113,7 +113,7 @@ export const useIncomeStore = () => {
 
     const deleteIncome = async (id) => {
         try {
-            const response = await axiosInstance.delete(`/api/incomes/${id}`);
+            const response = await api.delete(`/api/incomes/${id}`);
             if (state.incomes.length == 1 || (Array.isArray(id) && id.length == state.incomes.length)) {
                 dispatch({ type: "DECREMENT_CURRENT_PAGE" });
             }
