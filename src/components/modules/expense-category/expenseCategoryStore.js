@@ -1,7 +1,7 @@
 import { useState } from "react";
 import formatValidationErrors from "../../utils/format-validation-error";
 import { NotificationStore } from "../../shared/notification/notificationstore";
-import axiosInstance from "../../../hooks/axiosinstance";
+import {api} from "../../../hooks/axiosinstance";
 import {toast} from "react-toastify";
 export function useExpenseCategoryStore() {
     const [current_page, setCurrentPage] = useState(1);
@@ -29,7 +29,7 @@ export function useExpenseCategoryStore() {
 
     const fetchCatList = () => {
         return new Promise((resolve, reject) => {
-            axiosInstance
+            api
                 .get(`/api/expense-categories`)
                 .then((response) => {
                     console.log(response.data.data.data);
@@ -44,8 +44,7 @@ export function useExpenseCategoryStore() {
 
     const fetchExpenseCats = (page, limit, q_name = "") => {
         return new Promise((resolve, reject) => {
-            axiosInstance
-                .get(`/api/expense-categories?page=${page}&limit=${limit}&name=${q_name}`)
+            api.get(`/api/expense-categories?page=${page}&limit=${limit}&name=${q_name}`)
                 .then((response) => {
                     setExpenseCategories(response.data.data);
                     if (response.data.meta) {
@@ -64,8 +63,7 @@ export function useExpenseCategoryStore() {
 
     const fetchExpenseCat = (id) => {
         return new Promise((resolve, reject) => {
-            axiosInstance
-                .get(`/api/expense-categories/${id}`)
+            api.get(`/api/expense-categories/${id}`)
                 .then((response) => {
                     setCurrentExpenseCategoryItem(response.data.data);
                     resolve(response.data.data);
@@ -78,8 +76,7 @@ export function useExpenseCategoryStore() {
 
     const addExpenseCat = (data) => {
         return new Promise((resolve, reject) => {
-            axiosInstance
-                .post(`/api/expense-categories`, data)
+            api.post(`/api/expense-categories`, data)
                 .then((response) => {
                     resetCurrentExpenseCatData();
                     
@@ -105,8 +102,7 @@ export function useExpenseCategoryStore() {
 
     const editExpenseCat = (data) => {
         return new Promise((resolve, reject) => {
-            axiosInstance
-                .put(`/api/expense-categories/${edit_expense_category_id}`, data)
+            api.put(`/api/expense-categories/${edit_expense_category_id}`, data)
                 .then((response) => {
                     resetCurrentExpenseCatData();
     
@@ -139,8 +135,7 @@ export function useExpenseCategoryStore() {
 
     const deleteExpenseCat = (id) => {
         return new Promise((resolve, reject) => {
-            axiosInstance
-                .delete(`/api/expense-categories/${id}`)
+            api.delete(`/api/expense-categories/${id}`)
                 .then((response) => {
                     if (
                         expense_categories.length == 1 ||
