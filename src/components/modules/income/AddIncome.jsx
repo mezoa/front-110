@@ -38,8 +38,7 @@ const AddIncome = ({ categories, refreshData, close }) => {
     };
 
     const closeAddIncomeModal = () => {
-        incomeStore.resetCurrentIncomeData();
-        close();
+        resetCurrentIncomeData();
     };
 
     return (

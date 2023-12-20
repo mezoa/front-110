@@ -19,7 +19,7 @@ const store = configureStore({
             q_end_amount: "",
             q_start_date: "",
             q_end_date: "",
-            q_sort_column: "id",
+            q_sort_column: "expense_id",
             q_sort_order: "desc",
 
             expenses: [],
@@ -138,22 +138,34 @@ export const useNotificationStore = configureStore({
 });
 
 
-export const  fetchExpenses = async (page, limit, q_title = "") => {
-    return async (dispatch, getState) => {
-      try {
-        const state = getState();
-        const expenses = state.expense.expenses || {};
-        const response = await api.get(
-          `/api/expenses?page=${page}&limit=${limit}&title=${q_title}&category=${expenses.q_category}&start_amount=${expenses.q_start_amount}&end_amount=${expenses.q_end_amount}&start_date=${expenses.q_start_date}&end_date=${expenses.q_end_date}&sort_column=${expenses.q_sort_column}&sort_order=${expenses.q_sort_order}`
-        );
-        dispatch({ type: "SET_EXPENSES", payload: response.data.data });
-        console.log(response.data.data)
-        return response.data.data;
-      } catch (error) {
-        console.error(error);
-        throw error;
-      }
-    };
+export const fetchExpenses = (page, limit = 10, q_title = "") => { // set a default value for limit
+  return async (dispatch, getState) => {
+    try {
+      const state = getState();
+      const expenses = state.expense.expenses || {};
+
+      const params = new URLSearchParams({
+        page,
+        limit,
+        title: q_title,
+        category: expenses.q_category || "",
+        start_amount: expenses.q_start_amount || "",
+        end_amount: expenses.q_end_amount || "",
+        start_date: expenses.q_start_date || "",
+        end_date: expenses.q_end_date || "",
+        sort_column: expenses.q_sort_column || "expense_id",
+        sort_order: expenses.q_sort_order || "desc"
+      });
+
+      const response = await api.get(`/api/expenses?${params.toString()}`);
+      dispatch({ type: "SET_EXPENSES", payload: response.data.data });
+      console.log(response.data.data)
+      return response.data.data;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  };
 }
   
   async function fetchExpense(id) {
