@@ -53,7 +53,8 @@ export function useExpenseCategoryStore() {
                         setLimit(response.data.meta.per_page);
                         setQName(q_name);
                     }
-                    resolve(response.data.data);
+                    resolve(response.data.data.data);
+                    return response.data.data.data;
                 })
                 .catch((errors) => {
                     reject(errors);

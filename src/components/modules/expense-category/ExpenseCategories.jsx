@@ -84,6 +84,7 @@ const ExpenseCategories = () => {
         try {
             expenseCategoryStore.fetchExpenseCats(page, limit, q_name).then((response) => {
                 setLoading(false);
+                setExpenseCategories(response);
             });
         } catch (error) {
             // console.log(error);
@@ -141,7 +142,7 @@ const ExpenseCategories = () => {
                     </thead>
                     <tbody>
                         {expense_categories.map((expense_cat) => (
-                            <tr key={expense_cat.id}>
+                            <tr key={expense_cat.category_id}>
                                 <td>
                                     <input
                                         type="checkbox"

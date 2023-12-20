@@ -90,8 +90,9 @@ const Expense = () => {
     const fetchData = async (page = expenseStore.current_page, limit = expenseStore.limit, q_title = expenseStore.q_title) => {
         setLoading(true);
         try {
-            const response = dispatch(fetchExpenses(page, limit, q_title));
+            const response = await dispatch(fetchExpenses(page, limit, q_title));
             setLoading(false);
+            console.log('response', response)
             setExpenses(response);
         } catch (error) {
             console.log(error);
@@ -104,7 +105,6 @@ const Expense = () => {
         // other code...
     }, []);
 
-    console.log(expenses);
     return (
         <div>
             <div className="page-top-box mb-2 d-flex flex-wrap">
@@ -262,7 +262,7 @@ const Expense = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {expenses.map((expense) => (
+                            {(expenses || []).map((expense) => (
                                 <tr key={expense.id}>
                                     <td>
                                         <input
@@ -284,14 +284,8 @@ const Expense = () => {
                                     </td>
                                     <td className="min150 max150">{expense.title}</td>
                                     <td className="min100 max100">{expense.amount}</td>
-                                    <td className="min200 max200">
-                                        {expense.categories.map((expense_cat) => (
-                                            <span key={expense_cat.value} className="badge bg-primary m-1 px-2 shadow-sm py-1">
-                                                {expense_cat.label}
-                                            </span>
-                                        ))}
-                                    </td>
-                                    <td className="min100 max100">{expense.date}</td>
+                                    <td className="min200 max200">{expense.category}</td>
+                                    <td className="min100 max100">{expense.entry_date}</td>
                                     <td className="table-action-btns">
                                         <ViewIcon color="#00CFDD" onClick={() => openViewExpenseModal(expense.id)} />
                                         <EditIcon color="#739EF1" onClick={() => openEditExpenseModal(expense.id)} />
