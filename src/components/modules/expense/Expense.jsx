@@ -87,10 +87,10 @@ const Expense = () => {
         setShowViewExpense(true);
     };
 
-    const fetchData = async (page = expenseStore.current_page, limit = expenseStore.limit, q_title = expenseStore.q_title) => {
+    const fetchData = async (page = 1, limit = 10, q_title = "", q_category = "", q_start_amount = "", q_end_amount = "", q_start_date = "", q_end_date = "", q_sort_column = expenseStore.q_sort_column, q_sort_order = expenseStore.q_sort_order) => {
         setLoading(true);
         try {
-            const response = await dispatch(fetchExpenses(page, limit, q_title));
+            const response = await dispatch(fetchExpenses(page, limit, q_title, q_category, q_start_amount, q_end_amount, q_start_date, q_end_date, q_sort_column, q_sort_order));
             setLoading(false);
             console.log('response', response)
             setExpenses(response);
@@ -102,7 +102,17 @@ const Expense = () => {
     
     useEffect(() => {
         fetchData(1);
-        // other code...
+        fetchCategories().then((response) => {
+            if (Array.isArray(response)) {
+                const mappedResponse = response.map(category => ({
+                    value: category.category_id,
+                    label: category.name
+                }));
+                setExpenseCategories(mappedResponse);
+            } else {
+                console.error('fetchCategories response is not an array:', response);
+            }
+        });
     }, []);
 
     return (

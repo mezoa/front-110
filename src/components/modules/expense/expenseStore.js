@@ -138,49 +138,48 @@ export const useNotificationStore = configureStore({
 });
 
 
-export const fetchExpenses = (page, limit = 10, q_title = "") => { // set a default value for limit
+export const fetchExpenses = (page = 1, limit = 10, q_title = "", q_category = "", q_start_amount = "", q_end_amount = "", q_start_date = "", q_end_date = "", q_sort_column = "expense_id", q_sort_order = "desc") => {
   return async (dispatch, getState) => {
+      try {
+          const state = getState();
+          const expenses = state.expense.expenses || {};
+
+          const params = new URLSearchParams({
+              page,
+              limit,
+              title: q_title || (expenses.q_title || ""),
+              category: q_category || (expenses.q_category || ""),
+              start_amount: q_start_amount || (expenses.q_start_amount || ""),
+              end_amount: q_end_amount || (expenses.q_end_amount || ""),
+              start_date: q_start_date || (expenses.q_start_date || ""),
+              end_date: q_end_date || (expenses.q_end_date || ""),
+              sort_column: q_sort_column || (expenses.q_sort_column || "expense_id"),
+              sort_order: q_sort_order || (expenses.q_sort_order || "desc")
+          });
+
+          const response = await api.get(`/api/expenses?${params.toString()}`);
+          dispatch({ type: "FETCH_EXPENSES", payload: response.data.data });
+          console.log(response.data.data)
+          return response.data.data;
+      } catch (error) {
+          console.error(error);
+          throw error;
+      }
+  };
+}
+
+async function fetchExpense(id) {
+  return async (dispatch) => {
     try {
-      const state = getState();
-      const expenses = state.expense.expenses || {};
-
-      const params = new URLSearchParams({
-        page,
-        limit,
-        title: q_title,
-        category: expenses.q_category || "",
-        start_amount: expenses.q_start_amount || "",
-        end_amount: expenses.q_end_amount || "",
-        start_date: expenses.q_start_date || "",
-        end_date: expenses.q_end_date || "",
-        sort_column: expenses.q_sort_column || "expense_id",
-        sort_order: expenses.q_sort_order || "desc"
-      });
-
-      const response = await api.get(`/api/expenses?${params.toString()}`);
-      dispatch({ type: "SET_EXPENSES", payload: response.data.data });
-      console.log(response.data.data)
-      return response.data.data;
+      const response = await api.get(`/expenses/${id}`);
+      dispatch({ type: "FETCH_EXPENSE", payload: response.data.data });
+      dispatch({ type: "SET_CATEGORIES_DETAILS", payload: response.data.data.categories });
     } catch (error) {
       console.error(error);
       throw error;
     }
   };
 }
-  
-  async function fetchExpense(id) {
-    return async (dispatch) => {
-      try {
-        const response = await api.get(`/expenses/${id}`);
-        dispatch({ type: "FETCH_EXPENSE", payload: response.data.data });
-        dispatch({ type: "SET_CATEGORIES_DETAILS", payload: response.data.data.categories });
-        dispatch({ type: "SET_CATEGORIES", payload: response.data.data.categories.map((item) => item.value) });
-        return response.data.data;
-      } catch (error) {
-        throw error;
-      }
-    };
-  }
   
   export const addExpense = (expenseData) => {
     console.log(expenseData)

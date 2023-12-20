@@ -1,24 +1,23 @@
 import { useState, useEffect } from "react";
 import CrossIcon from "../../../assets/icons/crossicon";
 import Loader from "../../shared/loader/Loader";
-import { useExpenseStore } from "./expenseStore";
+import { useExpenseStore } from "../expense/expenseStore";
 
-const ViewExpense = ({ expense_id, onClose }) => {
+const ViewExpense = ({ expense_id }) => {
     const [loading, setLoading] = useState(false);
+    const [expense_data, setExpenseData] = useState({});
     const expenseStore = useExpenseStore();
-    const [expense_data, setExpenseData] = useState(expenseStore.current_expense_item);
-
-    console.log(expense_data);
 
     const fetchData = async (id) => {
         setLoading(true);
-        await expenseStore.fetchExpense(id);
+        const response = await expenseStore.fetchExpense(id);
+        setExpenseData(response.data.data);
         setLoading(false);
     };
 
     const closeViewExpenseModal = () => {
         expenseStore.resetCurrentExpenseData();
-        onClose();
+        // emit("close");
     };
 
     useEffect(() => {
@@ -31,18 +30,20 @@ const ViewExpense = ({ expense_id, onClose }) => {
                 <div className="modal-content">
                     <div className="modal-header">
                         <h5 className="modal-title">Expense Record Details</h5>
-                        <button type="button" className="close" onClick={closeViewExpenseModal}>
-                            <CrossIcon />
+                        <button type="button" className="close">
+                            <CrossIcon onClick={closeViewExpenseModal} />
                         </button>
                     </div>
 
                     <div className="modal-body">
-                        {loading && <Loader />}
-                        {!loading && (
+                        {loading ? (
+                            <Loader />
+                        ) : (
                             <div className="form-items">
                                 <form action="">
                                     <div className="form-item">
                                         <label className="my-2">Expense Short Title: </label>
+
                                         <input
                                             disabled
                                             type="text"
@@ -53,18 +54,20 @@ const ViewExpense = ({ expense_id, onClose }) => {
                                     <div className="form-item">
                                         <label className="my-2">Expense Category: </label>
                                         <div>
-                                            {expense_data.categories_details.map((expense_cat) => (
-                                                <span
-                                                    key={expense_cat.value}
-                                                    className="badge bg-primary m-1 px-2 shadow-sm py-2 rounded-2"
-                                                >
-                                                    {expense_cat.label}
-                                                </span>
-                                            ))}
+                                            {expense_data.categories_details &&
+                                                expense_data.categories_details.map((expense_cat) => (
+                                                    <span
+                                                        key={expense_cat.value}
+                                                        className="badge bg-primary m-1 px-2 shadow-sm py-2 rounded-2"
+                                                    >
+                                                        {expense_cat.label}
+                                                    </span>
+                                                ))}
                                         </div>
                                     </div>
                                     <div className="form-item">
                                         <label className="my-2">Expense Date: </label>
+
                                         <input
                                             disabled
                                             type="date"
@@ -74,6 +77,7 @@ const ViewExpense = ({ expense_id, onClose }) => {
                                     </div>
                                     <div className="form-item">
                                         <label className="my-2">Expense Amount: </label>
+
                                         <input
                                             disabled
                                             type="number"

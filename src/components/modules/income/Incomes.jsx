@@ -27,7 +27,11 @@ const Incomes = () => {
     const confirmStore = useConfirmStore();
     const incomeCategoryStore = useIncomeCategoryStore();
 
-    const q_title = "";
+    const [q_title, setQTitle] = useState([]);
+    const [q_start_date, setQStartDate] = useState([]);
+    const [q_end_date, setQEndDate] = useState([]);
+    const [categoryLabel, setCategoryLabel] = useState('');
+    
     let selected_incomes = [];
     let all_selectd = false;
 
@@ -69,23 +73,34 @@ const Incomes = () => {
         setShowViewIncome(true);
     };
 
-    const fetchData = async (page = incomeStore.current_page, limit = incomeStore.limit, q_title = incomeStore.q_title) => {
+    const fetchData = async (page = 1, limit = incomeStore.limit, title = q_title, category = incomeStore.q_category, startDate = q_start_date, endDate = q_end_date) => {
         setLoading(true);
-
         all_selectd = false;
         selected_incomes = [];
-
+    
         try {
-            incomeStore.fetchIncomes(page, limit, q_title).then((response) => {
-                setLoading(false);
-                console.log("response", response)
-                return setIncomes(response);
-            });
-        } catch (error) {
-            // console.log(error);
+            const response = await incomeStore.fetchIncomes(
+                page,
+                limit,
+                title,
+                category,
+                startDate,
+                endDate,
+                incomeStore.q_start_amount,
+                incomeStore.q_end_amount,
+                incomeStore.q_sort_column,
+                incomeStore.q_sort_order
+            );
+    
             setLoading(false);
+            setIncomes(response);
+        } catch (error) {
+            setLoading(false);
+            console.error(error);
         }
     };
+    
+      
 
     useEffect(() => {
         fetchData(1);
@@ -96,7 +111,14 @@ const Incomes = () => {
             }));
             setIncomeCategories(mappedResponse);
         });
-    }, []);
+    }, [incomeStore.q_title, incomeStore.q_category]);
+
+    
+    // Call fetchData whenever a filter value changes
+    useEffect(() => {
+        fetchData();
+    }, [incomeStore.q_title, incomeStore.q_category]); // Add more dependencies as needed
+    
     console.log("incomecategories", incomeCategories)
     return (
         <div>
@@ -112,36 +134,49 @@ const Incomes = () => {
                 <div className="p-1 my-2">
                     <div className="row">
                         <div className="col-md-3 col-sm-6 my-1">
-                            <input
-                                type="text"
-                                className="form-control"
-                                placeholder="type name.."
-                                value={q_title}
-                                onChange={(e) => fetchData(1, incomeStore.limit, e.target.value)}
-                            />
+                        <input
+                            type="text"
+                            className="form-control"
+                            placeholder="type name.."
+                            value={incomeStore.q_title}
+                            onChange={(e) => {
+                                const title = e.target.value;
+                                incomeStore.q_title = title;
+                                fetchData(1, incomeStore.limit, title);
+                            }}
+                        />
                         </div>
                         <div className="col-md-3 col-sm-6 my-1">
-                            <select
-                                className="form-select"
-                                value={incomeStore.q_category}
-                                onChange={(e) => fetchData(1)}
-                            >
-                                <option value="">select category</option>
-                                {(incomeCategories || []).map((incomeCategory) => (
-                                    <option key={incomeCategory.value} value={incomeCategory.value}>
-                                        {incomeCategory.label}
-                                    </option>
-                                ))}
-                            </select>
+                        <select
+                            className="form-select"
+                            value={incomeStore.q_category}
+                            onChange={(e) => {
+                                const categoryValue = e.target.value;
+                                incomeStore.q_category = categoryValue;
+                                const categoryLabel = incomeCategories.find(cat => cat.value === categoryValue)?.label;
+                                fetchData(1, incomeStore.limit, incomeStore.q_title, categoryLabel);
+                            }}
+                        >
+                            <option value="">select category</option>
+                            {(incomeCategories || []).map((incomeCategory) => (
+                                <option key={incomeCategory.value} value={incomeCategory.value}>
+                                    {incomeCategory.label}
+                                </option>
+                            ))}
+                        </select>
                         </div>
                         <div className="col-md-3 col-sm-6 my-1">
                             <div className="input-group input-group-sm mb-3">
-                                <span className="input-group-text">From</span>
+                            <span className="input-group-text">From</span>
                                 <input
                                     type="date"
                                     className="form-control"
-                                    onChange={(e) => fetchData(1)}
-                                    value={incomeStore.q_start_date}
+                                    onChange={(e) => {
+                                        const startDate = e.target.value;
+                                        setQStartDate(startDate);
+                                        fetchData(1, incomeStore.limit, q_title, incomeStore.q_category, startDate);
+                                    }}
+                                    value={q_start_date}
                                 />
                             </div>
                         </div>
@@ -151,19 +186,23 @@ const Incomes = () => {
                                 <input
                                     type="date"
                                     className="form-control"
-                                    onChange={(e) => fetchData(1)}
-                                    value={incomeStore.q_end_date}
+                                    onChange={(e) => setQEndDate(e.target.value)}
+                                    value={q_end_date}
                                 />
                             </div>
                         </div>
                         <div className="col-md-3 col-sm-6 my-1">
                             <div className="input-group input-group-sm mb-3">
-                                <span className="input-group-text">Min Amount</span>
+                            <span className="input-group-text">To</span>
                                 <input
-                                    type="number"
+                                    type="date"
                                     className="form-control"
-                                    onInput={(e) => fetchData(1)}
-                                    value={incomeStore.q_start_amount}
+                                    onChange={(e) => {
+                                        const endDate = e.target.value;
+                                        setQEndDate(endDate);
+                                        fetchData(1, incomeStore.limit, q_title, incomeStore.q_category, q_start_date, endDate);
+                                    }}
+                                    value={q_end_date}
                                 />
                             </div>
                         </div>
@@ -184,7 +223,10 @@ const Incomes = () => {
                                 <select
                                     className="form-select"
                                     value={incomeStore.q_sort_column}
-                                    onChange={(e) => fetchData(1)}
+                                    onChange={(e) => {
+                                        incomeStore.q_sort_column = e.target.value;
+                                        fetchData(1);
+                                    }}
                                 >
                                     <option value="id">Default</option>
                                     <option value="date">Date</option>
@@ -192,16 +234,20 @@ const Incomes = () => {
                                 </select>
                             </div>
                         </div>
+
                         <div className="col-md-3 col-sm-6 my-1">
                             <div className="input-group input-group-sm mb-3">
-                                <span className="input-group-text">order</span>
+                                <span className="input-group-text">Order</span>
                                 <select
                                     className="form-select"
                                     value={incomeStore.q_sort_order}
-                                    onChange={(e) => fetchData(1)}
+                                    onChange={(e) => {
+                                        incomeStore.q_sort_order = e.target.value;
+                                        fetchData(1);
+                                    }}
                                 >
-                                    <option value="desc">desc</option>
-                                    <option value="asc">asc</option>
+                                    <option value="desc">Desc</option>
+                                    <option value="asc">Asc</option>
                                 </select>
                             </div>
                         </div>

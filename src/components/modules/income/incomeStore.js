@@ -46,26 +46,37 @@ export const useIncomeStore = () => {
         dispatch({ type: "RESET_CURRENT_INCOME_DATA" });
     };
 
-    const fetchIncomes = async (page = 1, limit = 10, q_title = "") => {
-        try {
-          const incomes = state.incomes || {};
-          let url = `/api/incomes?page=${page}&limit=${limit}&title=${q_title}`;
-          if (incomes.q_category) url += `&category=${incomes.q_category}`;
-          if (incomes.q_start_amount) url += `&start_amount=${incomes.q_start_amount}`;
-          if (incomes.q_end_amount) url += `&end_amount=${incomes.q_end_amount}`;
-          if (incomes.q_start_date) url += `&start_date=${incomes.q_start_date}`;
-          if (incomes.q_end_date) url += `&end_date=${incomes.q_end_date}`;
-          if (incomes.q_sort_column) url += `&sort_column=${incomes.q_sort_column}`;
-          if (incomes.q_sort_order) url += `&sort_order=${incomes.q_sort_order}`;
-    
-          const response = await api.get(url);
-          console.log(response.data.data)
-          dispatch({ type: "SET_INCOMES", payload: response.data.data });
-          return response.data.data;
-        } catch (error) {
-          throw error;
-        }
-    };
+const fetchIncomes = async (
+    page = 1, 
+    limit = 10, 
+    q_title = initialState.q_title, 
+    q_category = initialState.q_category, 
+    q_start_amount = initialState.q_start_amount, 
+    q_end_amount = initialState.q_end_amount, 
+    q_start_date = initialState.q_start_date, 
+    q_end_date = initialState.q_end_date, 
+    q_sort_column = "", 
+    q_sort_order = ""
+) => {
+    try {
+        let url = `/api/incomes?page=${page}&limit=${limit}`;
+        if (q_title) url += `&title=${q_title}`;
+        if (q_category) url += `&category=${q_category}`;
+        if (q_start_amount) url += `&start_amount=${q_start_amount}`;
+        if (q_end_amount) url += `&end_amount=${q_end_amount}`;
+        if (q_start_date) url += `&start_date=${q_start_date}`;
+        if (q_end_date) url += `&end_date=${q_end_date}`;
+        if (q_sort_column) url += `&sort_column=${q_sort_column}`;
+        if (q_sort_order) url += `&sort_order=${q_sort_order}`;
+
+        const response = await api.get(url);
+        console.log(response.data.data)
+        dispatch({ type: "SET_INCOMES", payload: response.data.data });
+        return response.data.data;
+    } catch (error) {
+        throw error;
+    }
+};
 
     const fetchIncome = async (id) => {
         try {

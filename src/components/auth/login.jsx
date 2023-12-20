@@ -13,7 +13,7 @@ const Login = () => {
     event.preventDefault();
     const data = await login(email, password);
     if (data) {
-      navigate('/'); // Redirect to home page
+      navigate('/dashboard'); // Redirect to home page
     }
   };
 
