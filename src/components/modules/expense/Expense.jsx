@@ -87,10 +87,10 @@ const Expense = () => {
         setShowViewExpense(true);
     };
 
-    const fetchData = async (page = 1, limit = 10, q_title = "", q_category = "", q_start_amount = "", q_end_amount = "", q_start_date = "", q_end_date = "", q_sort_column = expenseStore.q_sort_column, q_sort_order = expenseStore.q_sort_order) => {
+    const fetchData = async (page = 1, limit = 10, q_title = "", q_name = "", q_start_amount = "", q_end_amount = "", q_start_date = "", q_end_date = "", q_sort_column = expenseStore.q_sort_column, q_sort_order = expenseStore.q_sort_order) => {
         setLoading(true);
         try {
-            const response = await dispatch(fetchExpenses(page, limit, q_title, q_category, q_start_amount, q_end_amount, q_start_date, q_end_date, q_sort_column, q_sort_order));
+            const response = await dispatch(fetchExpenses(page, limit, q_title, q_name, q_start_amount, q_end_amount, q_start_date, q_end_date, q_sort_column, q_sort_order));
             setLoading(false);
             console.log('response', response)
             setExpenses(response);
@@ -143,9 +143,9 @@ const Expense = () => {
                         <div className="col-md-3 col-sm-6 my-1">
                             <select
                                 className="form-select"
-                                value={expenseStore.q_category}
+                                value={expenseStore.q_name}
                                 onChange={(e) => {
-                                    expenseStore.q_category = e.target.value;
+                                    expenseStore.q_name = e.target.value;
                                     fetchData(1);
                                 }}
                             >
@@ -225,7 +225,7 @@ const Expense = () => {
                                     }}
                                 >
                                     <option value="id">Default</option>
-                                    <option value="date">Date</option>
+                                    <option value="entry_date">Date</option>
                                     <option value="amount">Amount</option>
                                 </select>
                             </div>

@@ -138,33 +138,33 @@ export const useNotificationStore = configureStore({
 });
 
 
-export const fetchExpenses = (page = 1, limit = 10, q_title = "", q_category = "", q_start_amount = "", q_end_amount = "", q_start_date = "", q_end_date = "", q_sort_column = "expense_id", q_sort_order = "desc") => {
+export const fetchExpenses = (page = 1, limit = 10, q_title = "", q_name = "", q_start_amount = "", q_end_amount = "", q_start_date = "", q_end_date = "", q_sort_column = "expense_id", q_sort_order = "") => {
   return async (dispatch, getState) => {
-      try {
-          const state = getState();
-          const expenses = state.expense.expenses || {};
+    try {
+      const state = getState();
+      const expenses = state.expense.expenses || {};
 
-          const params = new URLSearchParams({
-              page,
-              limit,
-              title: q_title || (expenses.q_title || ""),
-              category: q_category || (expenses.q_category || ""),
-              start_amount: q_start_amount || (expenses.q_start_amount || ""),
-              end_amount: q_end_amount || (expenses.q_end_amount || ""),
-              start_date: q_start_date || (expenses.q_start_date || ""),
-              end_date: q_end_date || (expenses.q_end_date || ""),
-              sort_column: q_sort_column || (expenses.q_sort_column || "expense_id"),
-              sort_order: q_sort_order || (expenses.q_sort_order || "desc")
-          });
+      const params = new URLSearchParams({
+        page,
+        limit,
+        title: q_title || (expenses.q_title || ""),
+        name: q_name || (expenses.q_name || ""),
+        start_amount: q_start_amount || (expenses.q_start_amount || ""),
+        end_amount: q_end_amount || (expenses.q_end_amount || ""),
+        start_date: q_start_date || (expenses.q_start_date || ""),
+        end_date: q_end_date || (expenses.q_end_date || ""),
+        sort_column: q_sort_column || (expenses.q_sort_column || "expense_id"),
+        sort_order: q_sort_order || (expenses.q_sort_order || "")
+      });
 
-          const response = await api.get(`/api/expenses?${params.toString()}`);
-          dispatch({ type: "FETCH_EXPENSES", payload: response.data.data });
-          console.log(response.data.data)
-          return response.data.data;
-      } catch (error) {
-          console.error(error);
-          throw error;
-      }
+      const response = await api.get(`/api/expenses?${params.toString()}`);
+      dispatch({ type: "FETCH_EXPENSES", payload: response.data.data });
+      console.log(response.data.data)
+      return response.data.data;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
   };
 }
 
