@@ -300,17 +300,17 @@ const Incomes = () => {
                                         <td className="min150 max150">{income.title}</td>
                                         <td className="min100 max100">{income.amount}</td>
                                         <td className="min200 max200">{income.category}</td>
-                                        <td className="min100 max100">{income.date}</td>
+                                        <td className="min100 max100">{new Date(income.date).toLocaleDateString()}</td>
                                         <td className="table-action-btns">
                                             <ViewIcon
                                                 color="#00CFDD"
-                                                onClick={() => openViewIncomeModal(income.id)}
+                                                onClick={() => openViewIncomeModal(income.income_id)}
                                             />
                                             <EditIcon
                                                 color="#739EF1"
-                                                onClick={() => openEditIncomeModal(income.id)}
+                                                onClick={() => openEditIncomeModal(income.income_id)}
                                             />
-                                            <BinIcon color="#FF7474" onClick={() => deleteData(income.id)} />
+                                            <BinIcon color="#FF7474" onClick={() => deleteData(income.income_id)} />
                                         </td>
                                     </tr>
                                 ))}

@@ -2,8 +2,8 @@ import { useEffect, useState, useCallback } from "react";
 import { useDispatch } from 'react-redux';
 import Loader from "../../shared/loader/Loader";
 import Pagination from "../../shared/pagination/Pagination";
-import { useConfirmStore } from "../../shared/confirm-alert/confirmStore";
-import { useExpenseStore } from "./expenseStore";
+import { useConfirmStore, show_box } from "../../shared/confirm-alert/confirmStore";
+import { useExpenseStore, deleteExpense} from "./expenseStore";
 import { useExpenseCategoryStore } from "../expense-category/expenseCategoryStore";
 import BinIcon from "../../../assets/icons/binicon";
 import EditIcon from "../../../assets/icons/editicon";
@@ -15,6 +15,7 @@ import AddExpense from "./AddExpense";
 import EditExpense from "./EditExpense";
 import ViewExpense from "./ViewExpense";
 import { fetchExpenses } from './expenseStore';
+import { toast } from 'react-toastify';
 
 
 const Expense = () => {
@@ -62,19 +63,29 @@ const Expense = () => {
 
     
 
-    const deleteData = async (id) => {
-        confirmStore.show_box({ message: "Do you want to delete selected expense?" }).then(async () => {
-            if (confirmStore.do_action === true) {
-                expenseStore.deleteExpense(id).then(() => {
-                    expenseStore.fetchExpenses(expenseStore.current_page, expenseStore.limit, expenseStore.q_title);
+    const deleteData = async (expense_id) => {
+        console.log('deleteData called with id:', expense_id);
     
-                    if (Array.isArray(id)) {
-                        setAllSelected(false);
-                        setSelectedExpenses([]);
-                    }
-                });
+        const userConfirmed = window.confirm('Do you want to delete selected expense?');
+        setLoading(true);
+        if (userConfirmed) {
+            try {
+                await deleteExpense(expense_id);
+                console.log('Expense deleted successfully');
+                toast.success('Expense deleted successfully');
+    
+                await fetchExpenses(expenseStore.current_page, expenseStore.limit, expenseStore.q_title);
+                console.log('Expenses after delete:', expenseStore.expenses);
+                setLoading(false);
+                if (Array.isArray(expense_id)) {
+                    setAllSelected(false);
+                    setSelectedExpenses([]);
+                }
+            } catch (error) {
+                console.error('Error deleting expense:', error);
+                toast.error('Error deleting expense');
             }
-        });
+        }
     };
 
     const openEditExpenseModal = (id) => {
@@ -114,7 +125,7 @@ const Expense = () => {
             }
         });
     }, []);
-
+    console.log("Expense List", expenses);
     return (
         <div>
             <div className="page-top-box mb-2 d-flex flex-wrap">
@@ -279,12 +290,12 @@ const Expense = () => {
                                             type="checkbox"
                                             className="form-check-input"
                                             // Check the checkbox if the current expense's id is in the selected_expenses array
-                                            checked={selected_expenses.includes(expense.id)}
+                                            checked={selected_expenses.includes(expense.expense_id)}
                                             onChange={(e) => {
                                                 // If the checkbox is checked
                                                 if (e.target.checked) {
                                                     // Add the current expense's id to the selected_expenses array
-                                                    setSelectedExpenses([...selected_expenses, expense.id]);
+                                                    setSelectedExpenses([...selected_expenses, expense.expense_id]);
                                                 } else {
                                                     // If the checkbox is not checked, remove the current expense's id from the selected_expenses array
                                                     setSelectedExpenses(selected_expenses.filter((id) => id !== expense.id));
@@ -295,11 +306,17 @@ const Expense = () => {
                                     <td className="min150 max150">{expense.title}</td>
                                     <td className="min100 max100">{expense.amount}</td>
                                     <td className="min200 max200">{expense.category}</td>
-                                    <td className="min100 max100">{expense.entry_date}</td>
-                                    <td className="table-action-btns">
-                                        <ViewIcon color="#00CFDD" onClick={() => openViewExpenseModal(expense.id)} />
-                                        <EditIcon color="#739EF1" onClick={() => openEditExpenseModal(expense.id)} />
-                                        <BinIcon color="#FF7474" onClick={() => deleteData(expense.id)} />
+                                    <td className="min100 max100">{new Date(expense.entry_date).toLocaleDateString()}</td>
+                                    <td className="table-action-btns d-flex flex-row">
+                                        <div onClick={() => openViewExpenseModal(expense.expense_id)} >
+                                        <ViewIcon color="#00CFDD" />
+                                        </div>
+                                        <div onClick={() => openEditExpenseModal(expense.expense_id)} >
+                                        <EditIcon color="#739EF1" />
+                                        </div>
+                                        <div onClick={() => deleteData(expense.expense_id)}>
+                                            <BinIcon color="#FF7474" />
+                                        </div>
                                     </td>
                                 </tr>
                             ))}
@@ -325,12 +342,17 @@ const Expense = () => {
                     />
                 )}
                 {showEditExpense && (
-                    <EditExpense
-                        expense_id={expenseStore.edit_expense_id}
-                        categories={expenseCategories}
-                        onClose={() => setShowEditExpense(false)}
-                        refreshData={() => fetchData(expenseStore.current_page)}
-                    />
+                    expenses.map(expense => (
+                        <div key={expense.expense_id}>
+                            {/* Your code to render each expense */}
+                            <EditExpense
+                                expenseId={expenseStore.edit_expense_id}
+                                categories={expenseCategories}
+                                onClose={() => setShowEditExpense(false)}
+                                refreshData={() => fetchData(expenseStore.current_page)}
+                            />
+                        </div>
+                    ))
                 )}
                 {showViewExpense && (
                     <ViewExpense

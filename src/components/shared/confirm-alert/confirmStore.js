@@ -40,6 +40,15 @@ const confirmReducer = (state = initialState, action) => {
     }
 };
 
+export const show_box = (message) => {
+    return {
+        type: 'SHOW_BOX',
+        payload: {
+            message: message,
+        },
+    };
+};
+
 const store = createStore(confirmReducer, applyMiddleware(thunk));
 
 export const useConfirmStore = () => {
