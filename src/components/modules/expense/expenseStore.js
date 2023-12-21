@@ -170,7 +170,8 @@ export const fetchExpenses = (page = 1, limit = 10, q_title = "", q_category = "
     }
   };
 }
-async function fetchExpense(id) {
+
+export const fetchExpense = (id) => {
   return async (dispatch) => {
     try {
       const response = await api.get(`/expenses/${id}`);
@@ -199,40 +200,33 @@ async function fetchExpense(id) {
     };
   };
   
-  async function editExpense(data) {
-    return async (dispatch, getState) => {
-      try {
-        const state = getState();
-        const response = await api.put(`/expenses/${state.expense.edit_expense_id}`, data);
-        dispatch({ type: "RESET_CURRENT_EXPENSE_DATA" });
-        dispatch(addNotification("Expense record updated successfully", "success"));
+  export const editExpense = async (data) => {
+    console.log(data)
+    try {
+        console.log(data.expense_id)
+        const { expense_id, ...dataWithoutExpenseId } = data;
+        const response = await api.put(`/api/expenses/${expense_id}`, dataWithoutExpenseId);
         return response;
-      } catch (errors) {
-        dispatch(addNotification("Error Occurred", "error"));
+    } catch (errors) {
         if (errors.response.status == 422) {
-          dispatch({ type: "SET_EDIT_EXPENSE_ERRORS", payload: formatValidationErrors(errors.response.data.errors) });
+            dispatch({ type: "SET_EDIT_EXPENSE_ERRORS", payload: formatValidationErrors(errors.response.data.errors) });
+            //add toasty here
         }
         throw errors;
-      }
-    };
-  }
+    }
+}
   
-  async function deleteExpense(id) {
-    return async (dispatch, getState) => {
+  export async function deleteExpense(id) {
+    console.log(id)
       try {
-        const state = getState();
-        const response = await api.delete(`/expenses/${id}`);
-        if (state.expense.expenses.length == 1 || (Array.isArray(id) && id.length == state.expense.expenses.length)) {
-          dispatch({ type: "DECREMENT_CURRENT_PAGE" });
-        }
-        dispatch({ type: "RESET_CURRENT_EXPENSE_DATA" });
-        dispatch(addNotification("Expense deleted successfully", "success", 2000));
+        const response = await api.delete(`/api/expenses/${id}`);
+        console.log(response)
         return response;
       } catch (error) {
+        console.log("what is the error? ", error)
         throw error;
       }
-    };
-  }
+}
   
   export function useExpenseActions() {
     const dispatch = useDispatch();

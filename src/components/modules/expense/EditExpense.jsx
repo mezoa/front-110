@@ -1,38 +1,55 @@
 import React, { useState, useEffect } from "react";
 import CrossIcon from "../../../assets/icons/crossicon";
 import Loader from "../../../components/shared/loader/Loader";
-import { useExpenseStore } from "./expenseStore";
+import { useExpenseStore, fetchExpense, editExpense } from "./expenseStore";
 import Select from 'react-select'; // Import the react-select library
+import {toast} from "react-toastify";
 
-const EditExpense = ({ expense_id, categories }) => {
+const EditExpense = ({ expenseId, categories, onClose, refreshData }) => {
     const [loading, setLoading] = useState(false);
     const expenseStore = useExpenseStore();
-    const [expense_data, setExpenseData] = useState(expenseStore.current_expense_item);
+    const [expense_data, setExpenseData] = useState(expenseStore.current_expense_item || {
+        title: '',
+        categories: '',
+        entry_date: '',
+        amount: '',
+        description: ''
+    });
 
+
+    console.log(expenseId);
     const submitData = async () => {
+        console.log(expense_data)
         try {
-            await expenseStore.editExpense(JSON.parse(JSON.stringify(expenseStore.current_expense_item)));
-            emit("refreshData");
-            emit("close");
+            const dataToSubmit = {
+                ...expense_data,
+                category_id: expense_data.categories.value,
+                expense_id: expenseId,
+            };
+            delete dataToSubmit.categories;
+            console.log(dataToSubmit)
+            await editExpense(dataToSubmit);
+            refreshData();
+            onClose();
+            toast.success('Expense successfully edited!');
         } catch (error) {
             console.log("error occurred" + error);
+            toast.error('An error occurred while editing the expense.');
         }
     };
-
-    const fetchData = async (id) => {
+    const fetchData = async () => {
         setLoading(true);
-        await expenseStore.fetchExpense(id);
+        await fetchExpense(expenseId);
         setLoading(false);
     };
 
     const closeEditExpenseModal = () => {
         expenseStore.resetCurrentExpenseData();
-        emit("close");
     };
 
     useEffect(() => {
-        fetchData(expense_id);
-    }, [expense_id]);
+        fetchData();
+    }, [expenseId]);
 
     return (
         <div className="modal fade show d-block">
@@ -53,9 +70,7 @@ const EditExpense = ({ expense_id, categories }) => {
                                 <form action="">
                                     <div className="form-item">
                                         <label className="my-2">Expense Short Title</label>
-                                        <p className="text-danger">
-                                            {expenseStore.edit_expense_errors.title}
-                                        </p>
+                                        <p className="text-danger">{expense_data.title}</p>
                                         <input
                                             type="text"
                                             className="form-control"
@@ -68,7 +83,7 @@ const EditExpense = ({ expense_id, categories }) => {
                                     <div className="form-item">
                                         <label className="my-2">Expense Category</label>
                                         <p className="text-danger">
-                                            {expenseStore.edit_expense_errors.categories}
+                                            {expense_data.categories.label}
                                         </p>
                                         <Select
                                             options={categories}
@@ -76,34 +91,29 @@ const EditExpense = ({ expense_id, categories }) => {
                                             onChange={(value) =>
                                                 setExpenseData({ ...expense_data, categories: value })
                                             }
-                                            isMulti
                                         />
                                     </div>
                                     <div className="form-item">
                                         <label className="my-2">Expense Date</label>
-                                        <p className="text-danger">
-                                            {expenseStore.edit_expense_errors.date}
-                                        </p>
+                                        <p className="text-danger">{expense_data.entry_date}</p>
                                         <input
                                             type="date"
                                             className="form-control"
-                                            value={expense_data.date}
+                                            value={expense_data.entry_date}
                                             onChange={(e) =>
-                                                setExpenseData({ ...expense_data, date: e.target.value })
+                                                setExpenseData({ ...expense_data, entry_date: e.target.value })
                                             }
                                         />
                                     </div>
                                     <div className="form-item">
                                         <label className="my-2">Expense Amount</label>
-                                        <p className="text-danger">
-                                            {expenseStore.edit_expense_errors.amount}
-                                        </p>
+                                        <p className="text-danger">{expense_data.amount}</p>
                                         <input
                                             type="number"
                                             className="form-control"
                                             value={expense_data.amount}
                                             onChange={(e) =>
-                                                setExpenseData({ ...expense_data, amount: e.target.value })
+                                                setExpenseData({ ...expense_data, amount: parseFloat(e.target.value) })
                                             }
                                         />
                                     </div>
