@@ -154,10 +154,18 @@ const Expense = () => {
                         <div className="col-md-3 col-sm-6 my-1">
                             <select
                                 className="form-select"
-                                value={expenseStore.q_name}
+                                value={expenseStore.q_category_id} // use category id here
                                 onChange={(e) => {
-                                    expenseStore.q_name = e.target.value;
-                                    fetchData(1);
+                                    const categoryId = Number(e.target.value);
+                                    expenseStore.q_category_id = categoryId; // store category id
+                                    const categoryName = expenseCategories.find(cat => cat.value === categoryId)?.label;
+                                    if (categoryName) {
+                                        expenseStore.q_category = categoryName; // Store the category name
+                                        fetchData(1, expenseStore.limit, expenseStore.q_title, categoryName);
+                                    } else {
+                                        // If no category is selected, pass an empty string as the category name
+                                        fetchData(1, expenseStore.limit, expenseStore.q_title, "");
+                                    }
                                 }}
                             >
                                 <option value="">select category</option>
