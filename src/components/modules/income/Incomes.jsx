@@ -13,6 +13,7 @@ import BulkDeleteButton from "../../buttons/BulkDeleteButton";
 import AddIncome from "./AddIncome";
 import EditIncome from "./EditIncome";
 import ViewIncome from "./ViewIncome";
+import { toast } from "react-toastify";
 
 const Incomes = () => {
     const [loading, setLoading] = useState(false);
@@ -22,8 +23,9 @@ const Incomes = () => {
     const [showViewIncome, setShowViewIncome] = useState(false);
     const [incomeCategories, setIncomeCategories] = useState([]);
     const [incomes, setIncomes] = useState([]);
-
-    let incomeStore = useIncomeStore();
+    const [income_id, setIncomeId] = useState([]);
+    const incomeStore = useIncomeStore();
+    const { deleteIncome, fetchIncomes, resetCurrentIncomeData   } = useIncomeStore();
     const confirmStore = useConfirmStore();
     const incomeCategoryStore = useIncomeCategoryStore();
 
@@ -49,22 +51,31 @@ const Incomes = () => {
     };
 
     const deleteData = async (id) => {
-        confirmStore.show_box({ message: "Do you want to delete selected income?" }).then(async () => {
-            if (confirmStore.do_action === true) {
-                incomeStore.deleteIncome(id).then(() => {
-                    incomeStore.fetchIncomes(incomeStore.current_page, incomeStore.limit, incomeStore.q_title);
+        setLoading(true)
+            const confirm = window.confirm("Are you sure you want to delete?");
+            if (confirm) {
+                try{
+                    await deleteIncome(id);
+                toast.success("Income deleted successfully!");
+                await fetchIncomes(incomeStore.current_page, incomeStore.limit, incomeStore.q_title);
 
+                setLoading(false)
                     if (Array.isArray(id)) {
                         all_selectd = false;
                         selected_incomes = [];
                     }
-                });
+                } catch(error){
+                    console.log("error occurred ",  error);
+                    toast.error("An error occurred while deleting the income.");
+                }
+                
             }
-        });
+
     };
 
     const openEditIncomeModal = (id) => {
-        incomeStore.edit_income_id = id;
+        console.log("id", id)
+        setIncomeId(id);
         setShowEditIncome(true);
     };
 
@@ -258,7 +269,7 @@ const Incomes = () => {
 
             {loading && <Loader />}
             {!loading && (
-                <div className="table-responsive bg-white shadow-sm">
+                <div className="table-responsive-sm bg-white shadow-sm">
                     <table className="table mb-0 table-hover">
                         <thead className="thead-dark">
                             <tr>
@@ -302,16 +313,21 @@ const Incomes = () => {
                                         <td className="min100 max100">{income.amount}</td>
                                         <td className="min200 max200">{income.category}</td>
                                         <td className="min100 max100">{new Date(income.date).toLocaleDateString()}</td>
-                                        <td className="table-action-btns">
+                                        <td className="table-action-btns d-flex flex-row">
+                                            <div onClick={() => openViewIncomeModal(income.income_id)}>
                                             <ViewIcon
                                                 color="#00CFDD"
-                                                onClick={() => openViewIncomeModal(income.income_id)}
                                             />
+                                            </div>
+                                            <div onClick={() => openEditIncomeModal(income.income_id)}>
                                             <EditIcon
                                                 color="#739EF1"
-                                                onClick={() => openEditIncomeModal(income.income_id)}
+                                                
                                             />
-                                            <BinIcon color="#FF7474" onClick={() => deleteData(income.income_id)} />
+                                            </div>
+                                            <div onClick={() => deleteData(income.income_id)}>
+                                                <BinIcon color="#FF7474"  />
+                                            </div>
                                         </td>
                                     </tr>
                                 ))}
@@ -338,7 +354,7 @@ const Incomes = () => {
                 )}
                 {showEditIncome && (
                     <EditIncome
-                        income_id={incomeStore.edit_income_id}
+                        income_id={income_id}
                         categories={incomeCategories}
                         close={() => setShowEditIncome(false)}
                         refreshData={() => fetchData(incomeStore.current_page)}

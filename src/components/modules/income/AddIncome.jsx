@@ -13,6 +13,7 @@ const AddIncome = ({ categories, refreshData, close }) => {
     });
 
     const incomeStore = useIncomeStore();
+    const { resetCurrentIncomeData } = incomeStore;
 
     useEffect(() => {
         incomeStore.resetCurrentIncomeData();
@@ -39,6 +40,7 @@ const AddIncome = ({ categories, refreshData, close }) => {
 
     const closeAddIncomeModal = () => {
         resetCurrentIncomeData();
+        close();
     };
 
     return (

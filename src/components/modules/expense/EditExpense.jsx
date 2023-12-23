@@ -8,13 +8,16 @@ import {toast} from "react-toastify";
 const EditExpense = ({ expenseId, categories, onClose, refreshData }) => {
     const [loading, setLoading] = useState(false);
     const expenseStore = useExpenseStore();
-    const [expense_data, setExpenseData] = useState(expenseStore.current_expense_item || {
+
+    const initialExpenseData = {
         title: '',
         categories: '',
         entry_date: '',
         amount: '',
         description: ''
-    });
+    };
+
+    const [expense_data, setExpenseData] = useState(expenseStore.current_expense_item || initialExpenseData);
 
 
     console.log(expenseId);
@@ -44,7 +47,8 @@ const EditExpense = ({ expenseId, categories, onClose, refreshData }) => {
     };
 
     const closeEditExpenseModal = () => {
-        expenseStore.resetCurrentExpenseData();
+        setExpenseData(initialExpenseData);
+        onClose();
     };
 
     useEffect(() => {
