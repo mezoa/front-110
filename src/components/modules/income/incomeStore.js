@@ -38,7 +38,7 @@ export const useIncomeStore = () => {
             amount: 0,
             entry_date: "",
             description: "",
-            categories: [],
+            categories: '',
         },
     };
 
@@ -81,9 +81,6 @@ const fetchIncomes = async (
     const fetchIncome = async (id) => {
         try {
             const response = await api.get(`/api/incomes/${id}`);
-            dispatch({ type: "SET_CURRENT_INCOME_ITEM", payload: response.data.data });
-            dispatch({ type: "SET_CURRENT_INCOME_ITEM_CATEGORIES_DETAILS", payload: response.data.data.categories });
-            dispatch({ type: "SET_CURRENT_INCOME_ITEM_CATEGORIES", payload: response.data.data.categories.map((item) => item.value) });
             return response.data.data;
         } catch (error) {
             throw error;
@@ -114,10 +111,11 @@ const fetchIncomes = async (
     };
 
     const editIncome = async (data) => {
+        console.log(data)
         try {
-            const response = await api.put(`/api/incomes/${state.edit_income_id}`, data);
+            const { income_id, user_id, ...dataWithoutIds } = data;
+            const response = await api.put(`/api/incomes/${income_id}`, dataWithoutIds);
             resetCurrentIncomeData();
-            dispatch(addNotification("income record updated successfully", "success"));
             return response;
         } catch (errors) {
             console.log(errors);
@@ -130,11 +128,9 @@ const fetchIncomes = async (
     };
 
     const deleteIncome = async (id) => {
+        console.log(id)
         try {
             const response = await api.delete(`/api/incomes/${id}`);
-            if (state.incomes.length == 1 || (Array.isArray(id) && id.length == state.incomes.length)) {
-                dispatch({ type: "DECREMENT_CURRENT_PAGE" });
-            }
             resetCurrentIncomeData();
             dispatch(addNotification("income deleted successfully", "success", 2000));
             return response;

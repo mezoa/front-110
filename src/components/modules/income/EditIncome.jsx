@@ -3,31 +3,55 @@ import CrossIcon from "../../../assets/icons/crossicon";
 import Loader from "../../shared/loader/Loader";
 import { useIncomeStore } from "./incomeStore";
 import Select from "react-select";
+import { toast } from "react-toastify";
 
-const EditIncome = ({ income_id, categories }) => {
+
+const EditIncome = ({ income_id, categories, close, refreshData }) => {
+    console.log("income_id", income_id)
     const [loading, setLoading] = useState(false);
     const incomeStore = useIncomeStore();
-    const [income_data, setIncomeData] = useState(incomeStore.current_income_item);
+    const { fetchIncome, editIncome } = incomeStore;
+    
+    const initialIncomeData = {
+        title: "",
+        categories: "",
+        entry_date: "",
+        amount: "",
+        description: "",
+    };
+    const [income_data, setIncomeData] = useState([]);
 
     const submitData = async () => {
         try {
-            await incomeStore.editIncome(JSON.parse(JSON.stringify(income_data)));
-            emit("refreshData");
-            emit("close");
+            const { categories, amount, date, ...otherData } = income_data;
+            const dataToSubmit = {
+                ...otherData,
+                category_id: categories.value,
+                amount: parseFloat(amount),
+                entry_date: date,
+            };
+            await editIncome(dataToSubmit);
+    
+            toast.success("Income edited successfully");
+            refreshData();
+            close();
         } catch (error) {
             console.log("error occurred" + error);
+            toast.error("Error occurred while editing income");
         }
     };
 
     const fetchData = async (id) => {
         setLoading(true);
-        await incomeStore.fetchIncome(id);
+         const incomes = await fetchIncome(id);
+            console.log('incomes', incomes);
+        setIncomeData(incomes);
         setLoading(false);
     };
 
     const closeEditIncomeModal = () => {
         incomeStore.resetCurrentIncomeData();
-        emit("close");
+        close();
     };
 
     useEffect(() => {
@@ -53,9 +77,6 @@ const EditIncome = ({ income_id, categories }) => {
                                 <form action="">
                                     <div className="form-item">
                                         <label className="my-2">Income Short Title</label>
-                                        <p className="text-danger">
-                                            {incomeStore.edit_income_errors.title}
-                                        </p>
                                         <input
                                             type="text"
                                             className="form-control"
@@ -70,11 +91,7 @@ const EditIncome = ({ income_id, categories }) => {
                                     </div>
                                     <div className="form-item">
                                         <label className="my-2">Income Category</label>
-                                        <p className="text-danger">
-                                            {incomeStore.edit_income_errors.categories}
-                                        </p>
                                         <Select
-                                            isMulti
                                             options={categories}
                                             value={income_data.categories}
                                             onChange={(value) =>
@@ -87,26 +104,20 @@ const EditIncome = ({ income_id, categories }) => {
                                     </div>
                                     <div className="form-item">
                                         <label className="my-2">Income Date</label>
-                                        <p className="text-danger">
-                                            {incomeStore.edit_income_errors.date}
-                                        </p>
                                         <input
                                             type="date"
                                             className="form-control"
-                                            value={income_data.date}
+                                            value={income_data.entry_date}
                                             onChange={(e) =>
                                                 setIncomeData({
                                                     ...income_data,
-                                                    date: e.target.value,
+                                                    entry_date: e.target.value,
                                                 })
                                             }
                                         />
                                     </div>
                                     <div className="form-item">
                                         <label className="my-2">Income Amount</label>
-                                        <p className="text-danger">
-                                            {incomeStore.edit_income_errors.amount}
-                                        </p>
                                         <input
                                             type="number"
                                             className="form-control"
