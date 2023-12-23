@@ -13,7 +13,6 @@ export const useIncomeStore = () => {
         current_page: 1,
         total_pages: 0,
         limit: 10,
-
         q_title: "",
         q_category: "",
         q_start_amount: "",
@@ -49,19 +48,19 @@ export const useIncomeStore = () => {
 const fetchIncomes = async (
     page = 1, 
     limit = 10, 
-    q_title = initialState.q_title, 
-    q_category = initialState.q_category, 
-    q_start_amount = initialState.q_start_amount, 
-    q_end_amount = initialState.q_end_amount, 
+    q_title = "", 
+    q_category = "", 
+    q_start_amount = "", 
+    q_end_amount = "", 
     q_start_date = initialState.q_start_date, 
     q_end_date = initialState.q_end_date, 
     q_sort_column = "", 
     q_sort_order = ""
 ) => {
     try {
-        let url = `/api/incomes?page=${page}&limit=${limit}`;
+        let url = `api/incomes?page=${page}&limit=${limit}`;
         if (q_title) url += `&title=${q_title}`;
-        if (q_category) url += `&category=${q_category}`;
+        url += `&name=&category=${q_category || ""}`; // Always include &name and &category together, even if q_category is empty
         if (q_start_amount) url += `&start_amount=${q_start_amount}`;
         if (q_end_amount) url += `&end_amount=${q_end_amount}`;
         if (q_start_date) url += `&start_date=${q_start_date}`;
@@ -69,15 +68,20 @@ const fetchIncomes = async (
         if (q_sort_column) url += `&sort_column=${q_sort_column}`;
         if (q_sort_order) url += `&sort_order=${q_sort_order}`;
 
+        console.log('API Request URL:', url); // Log the request URL
         const response = await api.get(url);
-        console.log(response.data.data)
+        console.log('API Response:', response);
+        if (!response.data.data) {
+            console.error('No data received from API.');
+            return;
+        }
         dispatch({ type: "SET_INCOMES", payload: response.data.data });
         return response.data.data;
     } catch (error) {
+        console.error('API Request Error:', error);
         throw error;
     }
 };
-
     const fetchIncome = async (id) => {
         try {
             const response = await api.get(`/api/incomes/${id}`);

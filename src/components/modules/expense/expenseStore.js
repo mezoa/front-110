@@ -138,7 +138,7 @@ export const useNotificationStore = configureStore({
 });
 
 
-export const fetchExpenses = (page = 1, limit = 10, q_title = "", q_name = "", q_start_amount = "", q_end_amount = "", q_start_date = "", q_end_date = "", q_sort_column = "expense_id", q_sort_order = "") => {
+export const fetchExpenses = (page = 1, limit = 10, q_title = "", q_category = "", q_start_amount = "", q_end_amount = "", q_start_date = "", q_end_date = "", q_sort_column = "expense_id", q_sort_order = "") => {
   return async (dispatch, getState) => {
     try {
       const state = getState();
@@ -148,7 +148,7 @@ export const fetchExpenses = (page = 1, limit = 10, q_title = "", q_name = "", q
         page,
         limit,
         title: q_title || (expenses.q_title || ""),
-        name: q_name || (expenses.q_name || ""),
+        category: q_category || (expenses.q_category || ""), // Add the category parameter
         start_amount: q_start_amount || (expenses.q_start_amount || ""),
         end_amount: q_end_amount || (expenses.q_end_amount || ""),
         start_date: q_start_date || (expenses.q_start_date || ""),
@@ -157,7 +157,10 @@ export const fetchExpenses = (page = 1, limit = 10, q_title = "", q_name = "", q
         sort_order: q_sort_order || (expenses.q_sort_order || "")
       });
 
-      const response = await api.get(`/api/expenses?${params.toString()}`);
+      const requestUrl = `/api/expenses?${params.toString()}`;
+      console.log(`Sending request to: ${requestUrl}`); // Log the request URL
+
+      const response = await api.get(requestUrl);
       dispatch({ type: "FETCH_EXPENSES", payload: response.data.data });
       console.log(response.data.data)
       return response.data.data;

@@ -158,23 +158,28 @@ const Incomes = () => {
                         />
                         </div>
                         <div className="col-md-3 col-sm-6 my-1">
-                        <select
-                            className="form-select"
-                            value={incomeStore.q_category}
-                            onChange={(e) => {
-                                const categoryValue = e.target.value;
-                                incomeStore.q_category = categoryValue;
-                                const categoryLabel = incomeCategories.find(cat => cat.value === categoryValue)?.label;
-                                fetchData(1, incomeStore.limit, incomeStore.q_title, categoryLabel);
-                            }}
-                        >
-                            <option value="">select category</option>
-                            {(incomeCategories || []).map((incomeCategory) => (
-                                <option key={incomeCategory.value} value={incomeCategory.value}>
-                                    {incomeCategory.label}
-                                </option>
-                            ))}
-                        </select>
+                            <select
+                                className="form-select"
+                                value={incomeStore.q_category}
+                                onChange={(e) => {
+                                    const categoryId = Number(e.target.value);
+                                    const categoryName = incomeCategories.find(cat => cat.value === categoryId)?.label;
+                                    if (categoryName) {
+                                        incomeStore.q_category = categoryName; // Store the category name instead of the id
+                                        fetchData(1, incomeStore.limit, incomeStore.q_title, categoryName);
+                                    } else {
+                                        // If no category is selected, pass an empty string as the category name
+                                        fetchData(1, incomeStore.limit, incomeStore.q_title, "");
+                                    }
+                                }}
+                            >
+                                <option value="">select category</option>
+                                {(incomeCategories || []).map((incomeCategory) => (
+                                    <option key={incomeCategory.value} value={incomeCategory.value}>
+                                        {incomeCategory.label}
+                                    </option>
+                                ))}
+                            </select>
                         </div>
                         <div className="col-md-3 col-sm-6 my-1">
                             <div className="input-group input-group-sm mb-3">
@@ -203,17 +208,13 @@ const Incomes = () => {
                             </div>
                         </div>
                         <div className="col-md-3 col-sm-6 my-1">
-                            <div className="input-group input-group-sm mb-3">
-                            <span className="input-group-text">To</span>
+                        <div className="input-group input-group-sm mb-3">
+                                <span className="input-group-text">Min Amount</span>
                                 <input
-                                    type="date"
+                                    type="number"
                                     className="form-control"
-                                    onChange={(e) => {
-                                        const endDate = e.target.value;
-                                        setQEndDate(endDate);
-                                        fetchData(1, incomeStore.limit, q_title, incomeStore.q_category, q_start_date, endDate);
-                                    }}
-                                    value={q_end_date}
+                                    onInput={(e) => fetchData(1)}
+                                    value={incomeStore.q_start_amount}
                                 />
                             </div>
                         </div>
