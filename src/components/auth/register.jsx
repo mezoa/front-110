@@ -1,9 +1,24 @@
 import React from 'react'
 import useRegisterForm from '../../hooks/useRegisterForm'
+import { useNavigate } from 'react-router-dom'
+import logo from './../../assets/img/Budget Flow.svg'
 
 const Register = () => {
     const { values, handleChange, handleSubmit } = useRegisterForm({ name: '', email: '', password: '' });
-    
+    const navigate = useNavigate();
+
+    const submitForm = async (event) => {
+      event.preventDefault();
+      const data = await handleSubmit(values);
+      if (data) {
+          navigate('/login'); // Redirect to login page after successful registration
+      }
+  }
+
+  const handleButtonClick = () => {
+    navigate('/'); // Navigate to home page
+  };
+  
   return (
     <div className="container">
       <div className="row justify-content-center align-items-center vh-100">
@@ -14,7 +29,8 @@ const Register = () => {
           <div onSubmit={handleSubmit} className="card pt-4">
             <div className="card-body">
               <div className="text-center mb-5">
-                <img src="./../../assets/icons/usericon.jsx" className='img-fluid mb-4'/>
+                <button className="close-button" onClick={handleButtonClick}>x</button>
+                <img src={logo} className='img-fluid mb-4'/>
                 <h3>Register</h3>
                 <p>Please fill the form to Register</p>
               </div>
@@ -53,9 +69,6 @@ const Register = () => {
                   <button className="btn btn-primary" type="submit">Sign In</button>
                 </div>
               </form>
-              <div className="mt-3">
-                <a href="#">Don't have an account? Sign Up</a>
-              </div>
 
             </div>
           </div>

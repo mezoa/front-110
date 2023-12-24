@@ -10,7 +10,7 @@ const api = axios.create({
 });
 
 const axiosInstance = axios.create({
-  baseURL: 'https://0ae9-49-148-169-139.ngrok-free.app/expenseApp/public',
+  baseURL: 'https://0ae9-49-148-169-139.ngrok-free.app/expenseApp/publicG',
   headers: {
     'ngrok-skip-browser-warning': '1', // Add this line
   }

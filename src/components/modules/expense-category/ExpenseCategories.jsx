@@ -1,3 +1,4 @@
+// Import necessary components and hooks
 import { useState, useEffect } from "react";
 import Loader from '../../shared/loader/Loader.jsx'
 import Pagination from "../../shared/pagination/Pagination.jsx";
@@ -13,14 +14,16 @@ import AddExpenseCat from "./AddExpenseCat.jsx";
 import EditExpenseCat from "./EditExpenses.jsx";
 import ViewExpenseCat from "./ViewExpenseCat.jsx";
 
-
+// Define the ExpenseCategories component
 const ExpenseCategories = () => {
+    // Define state variables for loading state, filter tab visibility, and modal visibility
     const [loading, setLoading] = useState(false);
     const [filterTab, setFilterTab] = useState(true);
     const [showAddExpenseCat, setShowAddExpenseCat] = useState(false);
     const [showEditExpenseCat, setShowEditExpenseCat] = useState(false);
     const [showViewExpenseCat, setShowViewExpenseCat] = useState(false);
 
+    // Initialize stores
     const confirmStore = useConfirmStore();
     const expenseCategoryStore = useExpenseCategoryStore();
     const [expense_categories, setExpenseCategories] = useState([]);
@@ -28,6 +31,7 @@ const ExpenseCategories = () => {
     const [selected_expense_cats, setSelectedExpenseCats] = useState([]);
     const [all_selectd, setAllSelectd] = useState(false);
 
+    // Define a function to select all expense categories
     const select_all = () => {
         if (all_selectd === false) {
             setSelectedExpenseCats(
@@ -40,6 +44,7 @@ const ExpenseCategories = () => {
         }
     };
 
+    //Define a function to delete 
     const deleteData = (id) => {
         confirmStore.show_box({
             message: "Do you want to delete selected expense category?",

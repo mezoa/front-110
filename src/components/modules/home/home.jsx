@@ -2,10 +2,14 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import './home.css';
+import logo from '../../../assets/img/Budget Flow No Shadow.svg';
 
 const Home = () => {
   return (
     <>
+      <div className="logo-container">
+            <img src={logo} alt="Logo" className="logo" />
+      </div>
       <motion.div
         className="homecontainer"
         initial={{ opacity: 0, scale: 0.95 }}

@@ -6,6 +6,8 @@ import thunk from "redux-thunk";
 import { useMemo } from "react";
 import {api} from "../../../hooks/axiosinstance";
 
+// In summary this file manages the function logic and api request handlers to perform the necessary actions or process
+// Define a custom hook to manage income related state and operations
 const store = configureStore({
     reducer: {
         expense: (state = {
